@@ -12,8 +12,9 @@ public class Pergunta
     public string Enunciado  { get; private set; }
     [Required]
     public List<Alternativa> Alternativas { get; private set; }
+    public Guid PesquisaId { get; private set; }
     
-    
+    public Pesquisa Pesquisa { get; private set; }
     public List<Resposta> Respostas { get; private set; }
 
     public Pergunta(string enunciado, List<Alternativa> alternativas)

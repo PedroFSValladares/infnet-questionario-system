@@ -31,6 +31,14 @@ public class Pesquisa
         DataFinalizacao = dataFinalizacao;
         Perguntas = perguntas;
     }
+
+    public Pesquisa(Guid id, string nome, StatusPesquisa statusPesquisa, List<Pergunta> perguntas)
+    {
+        Id = id;
+        Nome = nome;
+        StatusPesquisa = statusPesquisa;
+        Perguntas = perguntas;
+    }
     
     public Pesquisa(){}
 }

@@ -10,6 +10,7 @@ public class QuestionarioContext : DbContext
     public DbSet<Pergunta> Perguntas { get; set; }
     public DbSet<Alternativa> Alternativas { get; set; }
     public DbSet<Resposta> Respostas { get; set; }
+    public DbSet<Pesquisa> Pesquisas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -18,6 +19,13 @@ public class QuestionarioContext : DbContext
             .HasMany(p => p.Alternativas)
             .WithOne(a => a.Pergunta)
             .HasForeignKey(a => a.PerguntaId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Pesquisa>()
+            .HasMany(p => p.Perguntas)
+            .WithOne(p => p.Pesquisa)
+            .HasForeignKey(p => p.PesquisaId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 

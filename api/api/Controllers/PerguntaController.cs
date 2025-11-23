@@ -21,7 +21,7 @@ public class PerguntaController : ControllerBase
     public IActionResult Incluir([FromBody] IncluirPerguntaDto perguntaDto)
     {
         var pergunta = perguntaDto.ToEntity();
-        return Ok(_perguntaRepository.Salvar(pergunta).ToResponseDto());
+        return Created(nameof(ObterPorId), _perguntaRepository.Salvar(pergunta).ToResponseDto());
     }
 
     [HttpPut("{id}")]

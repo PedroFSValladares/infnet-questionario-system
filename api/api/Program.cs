@@ -18,7 +18,8 @@ builder.Services.AddDbContext<QuestionarioContext>(options =>
 {
     options.UseInMemoryDatabase("Questionarios");
 });
-builder.Services.AddScoped<PerguntaRepository>();
+builder.Services.AddScoped<PerguntaRepository>()
+    .AddScoped<PesquisaRepository>();
 builder.Services.AddHostedService<PerguntaLoader>();
 
 var app = builder.Build();
