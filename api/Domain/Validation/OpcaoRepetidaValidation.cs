@@ -8,13 +8,13 @@ public class OpcaoRepetidaValidation : ValidationAttribute
 {
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
-        if (validationContext.ObjectType == typeof(PerguntaDto))
-            return Validate(value as List<AlternativaDto>);
+        if (validationContext.ObjectType == typeof(IncluirPerguntaDto))
+            return Validate(value as List<IncluirAlternativaDto>);
         
         return Validate(value as List<AlterarAlternativaDto>);
     }
 
-    private ValidationResult? Validate(List<AlternativaDto> alternativas)
+    private ValidationResult? Validate(List<IncluirAlternativaDto> alternativas)
     {
         foreach (var alternativa in alternativas)
         {

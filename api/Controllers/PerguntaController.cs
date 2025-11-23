@@ -18,17 +18,17 @@ public class PerguntaController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Incluir([FromBody] PerguntaDto perguntaDto)
+    public IActionResult Incluir([FromBody] IncluirPerguntaDto perguntaDto)
     {
         var pergunta = perguntaDto.ToEntity();
         return Ok(_perguntaRepository.Salvar(pergunta).ToResponseDto());
     }
 
     [HttpPut("{id}")]
-    public IActionResult Alterar(string id, [FromBody] AlterarPerguntaDto perguntaDto)
+    public IActionResult Alterar(Guid id, [FromBody] AlterarPerguntaDto perguntaDto)
     {
         var pergunta = perguntaDto.ToEntity();
-        var perguntaAtualizada = _perguntaRepository.Atualizar(pergunta.Id, pergunta);
+        var perguntaAtualizada = _perguntaRepository.Atualizar(id, pergunta);
         
         return perguntaAtualizada == null ?  NotFound() : Ok(perguntaAtualizada.ToResponseDto()); 
     }

@@ -13,7 +13,7 @@ public class AlterarPerguntaDto : PerguntaDto
     [OpcaoRepetidaValidation]
     public new List<AlterarAlternativaDto> Alternativas { get; set; }
 
-    public override Model.Pergunta ToEntity()
+    public virtual Model.Pergunta ToEntity()
     {
         return new Model.Pergunta(Id, Enunciado, Alternativas.Select(a => a.ToEntity()).ToList());
     }

@@ -4,12 +4,15 @@ using api.Domain.Validation;
 
 namespace api.Domain.DTOs.Pergunta;
 
-public abstract class PerguntaDto
+public class IncluirPerguntaDto : PerguntaDto
 {
-    [Required(ErrorMessage = "O enunciado da pergunta deve ser informado.")]
-    public string Enunciado  { get; set; }
     [Required(ErrorMessage = "Devem ser infomadas alternativas para a pergunta")]
     [MinLength(2, ErrorMessage = "Devem ser informadas ao menos duas alternativas.")]
     [OpcaoRepetidaValidation]
-    public List<AlternativaDto> Alternativas { get; set; }
+    public new List<IncluirAlternativaDto> Alternativas { get; set; }
+    
+    public virtual Model.Pergunta ToEntity()
+    {
+        return new Model.Pergunta(Enunciado, Alternativas.Select(a => a.ToEntity()).ToList());
+    }
 }
