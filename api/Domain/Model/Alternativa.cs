@@ -6,11 +6,8 @@ public class Alternativa
 {
     [Key]
     public Guid Id { get; private set; }
-    [Required]
     public char Opcao { get; private set; }
-    [Required]
     public string Texto { get; private set; }
-    [Required]
     public Guid PerguntaId { get; private set; }
     
     public Pergunta Pergunta { get; private set; }
@@ -18,6 +15,13 @@ public class Alternativa
     public Alternativa(char opcao, string texto)
     {
         Id = Guid.NewGuid();
+        Opcao = opcao;
+        Texto = texto;
+    }
+
+    public Alternativa(Guid id, char opcao, string texto)
+    {
+        id = Id;
         Opcao = opcao;
         Texto = texto;
     }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Domain.Repositories;
 
-public class PerguntaRepository : IIncludableRepository<Pergunta>, IQueryableRepository<Guid, Pergunta>
+public class PerguntaRepository : IIncludableRepository<Pergunta>, IQueryableRepository<Guid, Pergunta>, IUpdatebleRepository<Guid, Pergunta>
 {
     private readonly QuestionarioContext _context;
     
@@ -29,5 +29,20 @@ public class PerguntaRepository : IIncludableRepository<Pergunta>, IQueryableRep
     public List<Pergunta> ObterTodos()
     {
         return  _context.Perguntas.ToList();
+    }
+
+    public Pergunta? Atualizar(Guid id, Pergunta entity)
+    {
+        var pergunta = ObterPorId(id);
+
+        if (pergunta == null)
+            return null;
+         
+        pergunta.AtualizarEnunciado(entity.Enunciado);
+        pergunta.AtualizarAlternativas(entity.Alternativas);
+
+        _context.Perguntas.Update(pergunta);
+        _context.SaveChanges();
+        return pergunta;
     }
 }

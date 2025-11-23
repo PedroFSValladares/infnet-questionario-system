@@ -23,9 +23,23 @@ public class Pergunta
         Alternativas = alternativas;
     }
 
-    public Pergunta()
+    public Pergunta(Guid id, string enunciado, List<Alternativa> alternativas)
     {
-        Id = Guid.NewGuid();
+        Id = id;
+        Enunciado = enunciado;
+        Alternativas = alternativas;
+    }
+    
+    public Pergunta(){}
+
+    public void AtualizarEnunciado(string enunciado)
+    {
+        Enunciado = enunciado;
+    }
+
+    public void AtualizarAlternativas(List<Alternativa> alternativas)
+    {
+        Alternativas = alternativas;
     }
 
     public override string ToString()
@@ -47,6 +61,15 @@ public class Pergunta
                     Texto = alternativa.Texto
 
                 }).ToList()
+        };
+    }
+
+    public PerguntaResumidaResponseDto ToPerguntaResumidaResponseDto()
+    {
+        return new PerguntaResumidaResponseDto
+        {
+            Id = Id,
+            Enunciado = Enunciado
         };
     }
 }
