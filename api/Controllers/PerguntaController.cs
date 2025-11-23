@@ -32,6 +32,13 @@ public class PerguntaController : ControllerBase
         
         return perguntaAtualizada == null ?  NotFound() : Ok(perguntaAtualizada.ToResponseDto()); 
     }
+
+    [HttpDelete("{id}")]
+    public IActionResult Excluir(Guid id)
+    {
+        _perguntaRepository.Delete(id);
+        return NoContent();
+    }
     
     [HttpGet]
     public IActionResult ObterTodos()
