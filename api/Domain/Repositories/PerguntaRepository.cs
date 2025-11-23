@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Domain.Repositories;
 
-public class PerguntaRepository : IIncludableRepository<Pergunta>, IQueryableRepository<Guid, Pergunta>, IUpdatebleRepository<Guid, Pergunta>
+public class PerguntaRepository : 
+    IIncludableRepository<Pergunta>, IQueryableRepository<Guid, Pergunta>, IUpdatebleRepository<Guid, Pergunta>, IDeletableRepository<Guid>
 {
     private readonly QuestionarioContext _context;
     
@@ -23,7 +24,10 @@ public class PerguntaRepository : IIncludableRepository<Pergunta>, IQueryableRep
 
     public Pergunta? ObterPorId(Guid id)
     {
-        return _context.Perguntas.Include(x => x.Alternativas).FirstOrDefault();
+        return _context.Perguntas
+            .Where(p => p.Id == id)
+            .Include(pergunta => pergunta.Alternativas)
+            .FirstOrDefault();
     }
 
     public List<Pergunta> ObterTodos()
@@ -44,5 +48,15 @@ public class PerguntaRepository : IIncludableRepository<Pergunta>, IQueryableRep
         _context.Perguntas.Update(pergunta);
         _context.SaveChanges();
         return pergunta;
+    }
+
+    public void Delete(Guid id)
+    {
+        var pergunta = ObterPorId(id);
+        
+        if (pergunta == null) return;
+        
+        _context.Perguntas.Remove(pergunta);
+        _context.SaveChanges();
     }
 }
