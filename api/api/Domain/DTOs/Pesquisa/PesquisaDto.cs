@@ -9,9 +9,4 @@ public class PesquisaDto
     public string Nome { get; set; }
     [Required(ErrorMessage = "A pesquisa deve conter ao menos uma pergunta.")]
     public List<IncluirPerguntaDto> Perguntas { get; set; }
-
-    public virtual Model.Pesquisa ToEntity()
-    {
-        return new Model.Pesquisa(Nome, Perguntas.Select(pergunta => pergunta.ToEntity()).ToList());
-    }
 }

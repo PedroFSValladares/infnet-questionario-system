@@ -6,41 +6,57 @@ namespace api.Domain.Model;
 
 public class Pergunta
 {
-    [Key]
-    public Guid Id { get; private set; }
-    [Required]
-    public string Enunciado  { get; private set; }
-    [Required]
-    public List<Alternativa> Alternativas { get; private set; }
-    public Guid PesquisaId { get; private set; }
-    
-    public Pesquisa Pesquisa { get; private set; }
-    public List<Resposta> Respostas { get; private set; }
+    [Key] private Guid id;
+    [Required] private string enunciado;
+    [Required] private List<Alternativa> alternativas;
+    private Guid pesquisaId;
+    private Pesquisa pesquisa;
+    private List<Resposta> respostas;
 
-    public Pergunta(string enunciado, List<Alternativa> alternativas)
+    public Guid Id
+    {
+        get => id;
+        private set => id = value;
+    }
+
+    public string Enunciado
+    {
+        get => enunciado;
+        set => enunciado = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
+    public List<Alternativa> Alternativas
+    {
+        get => alternativas;
+        set => alternativas = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
+    public Guid PesquisaId
+    {
+        get => pesquisaId;
+        set => pesquisaId = value;
+    }
+
+    public Pesquisa Pesquisa
+    {
+        get => pesquisa;
+        set => pesquisa = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
+    public List<Resposta> Respostas
+    {
+        get => respostas;
+        set => respostas = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
+    public Pergunta()
     {
         Id = Guid.NewGuid();
-        Enunciado = enunciado;
-        Alternativas = alternativas;
     }
 
-    public Pergunta(Guid id, string enunciado, List<Alternativa> alternativas)
+    public Pergunta(Guid id)
     {
         Id = id;
-        Enunciado = enunciado;
-        Alternativas = alternativas;
-    }
-    
-    public Pergunta(){}
-
-    public void AtualizarEnunciado(string enunciado)
-    {
-        Enunciado = enunciado;
-    }
-
-    public void AtualizarAlternativas(List<Alternativa> alternativas)
-    {
-        Alternativas = alternativas;
     }
 
     public override string ToString()

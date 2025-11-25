@@ -31,15 +31,39 @@ public class PerguntaLoader : BackgroundService
             {
                 List<Alternativa> alternativas = new List<Alternativa>
                 {
-                    new ('A', campos[1]),
-                    new ('B', campos[2]),
-                    new ('C', campos[3]),
-                    new ('D', campos[4]),
-                    new ('E', campos[5])
+                    new Alternativa
+                    {
+                        Opcao = 'A',
+                        Texto =  campos[1],
+                    },
+                    new Alternativa
+                    {
+                        Opcao = 'B',
+                        Texto =  campos[2],
+                    },
+                    new Alternativa
+                    {
+                        Opcao = 'C',
+                        Texto =  campos[3],
+                    },
+                    new Alternativa
+                    {
+                        Opcao = 'D',
+                        Texto =  campos[4],
+                    },
+                    new Alternativa
+                    {
+                        Opcao = 'E',
+                        Texto =  campos[5],
+                    }
                 };
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    Pergunta pergunta = new Pergunta(campos[0], alternativas);
+                    Pergunta pergunta = new Pergunta
+                    {
+                        Enunciado = campos[0],
+                        Alternativas = alternativas
+                    };
                     PerguntaRepository repository = scope.ServiceProvider.GetRequiredService<PerguntaRepository>(); 
                     repository.Salvar(pergunta);
                     _logger.LogInformation($"Pergunta: {pergunta}");

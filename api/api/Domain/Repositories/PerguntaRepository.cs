@@ -42,8 +42,8 @@ public class PerguntaRepository :
         if (pergunta == null)
             return null;
          
-        pergunta.AtualizarEnunciado(entity.Enunciado);
-        pergunta.AtualizarAlternativas(entity.Alternativas);
+        pergunta.Enunciado = entity.Enunciado;
+        pergunta.Alternativas = entity.Alternativas;
 
         _context.Perguntas.Update(pergunta);
         _context.SaveChanges();

@@ -69,5 +69,22 @@ public class PesquisaDtoFactory
         };
     }
 
-    
+    public static AlterarPesquisaDto CreateAlterarPesquisaDto(api.Domain.Model.Pesquisa pesquisa)
+    {
+        return new AlterarPesquisaDto
+        {
+            Nome = pesquisa.Nome,
+            Perguntas = pesquisa.Perguntas.Select(p => new AlterarPerguntaDto
+            {
+                Id = p.Id,
+                Enunciado = p.Enunciado,
+                Alternativas = p.Alternativas.Select(a => new AlterarAlternativaDto
+                {
+                    Id = a.Id,
+                    Opcao = a.Opcao,
+                    Texto = a.Texto
+                }).ToList()
+            }).ToList()
+        };
+    }
 }

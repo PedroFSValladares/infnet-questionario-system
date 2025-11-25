@@ -4,30 +4,54 @@ namespace api.Domain.Model;
 
 public class Alternativa
 {
-    [Key]
-    public Guid Id { get; private set; }
-    public char Opcao { get; private set; }
-    public string Texto { get; private set; }
-    public Guid PerguntaId { get; private set; }
+    [Key] private Guid id;
+    private char opcao;
+    private string texto;
+    private Guid perguntaId;
+    private Pergunta pergunta;
     
-    public Pergunta Pergunta { get; private set; }
-    
-    public Alternativa(char opcao, string texto)
+    public Alternativa(Guid id)
     {
-        Id = Guid.NewGuid();
-        Opcao = opcao;
-        Texto = texto;
+        Id = id;
     }
 
-    public Alternativa(Guid id, char opcao, string texto)
+    public Alternativa()
     {
-        id = Id;
-        Opcao = opcao;
-        Texto = texto;
+        Id = Guid.NewGuid();
+    }
+
+    public Guid Id
+    {
+        get => id;
+        private set => id = value;
+    }
+
+    public char Opcao
+    {
+        get => opcao;
+        set => opcao = value;
+    }
+
+    public string Texto
+    {
+        get => texto;
+        set => texto = value ?? throw new ArgumentNullException(nameof(value));
+    }
+
+    public Guid PerguntaId
+    {
+        get => perguntaId;
+        set => perguntaId = value;
+    }
+
+    public Pergunta Pergunta
+    {
+        get => pergunta;
+        set => pergunta = value ?? throw new ArgumentNullException(nameof(value));
     }
 
     public override string ToString()
     {
-        return $"{Opcao}. {Texto}";
+        return $"{Opcao}.) {Texto}";
     }
 }

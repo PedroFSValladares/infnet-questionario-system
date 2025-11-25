@@ -1,5 +1,6 @@
 using api.Context;
 using api.Controllers;
+using api.Domain.Factories;
 using api.Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +37,7 @@ public class ControllerTests
     public void TestaObterPesquisaController()
     {
         var pesquisaDto = PesquisaDtoFactory.CreateIncluirPesquisaDto();
-        var pesquisaEntidade = pesquisaDto.ToEntity();
+        var pesquisaEntidade = PesquisaFactory.CriarPesquisa(pesquisaDto);
         
         var pesquisaSalva = _pesquisaRepository.Salvar(pesquisaEntidade);
         

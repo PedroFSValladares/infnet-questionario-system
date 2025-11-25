@@ -1,6 +1,7 @@
 using api.Context;
 using api.Controllers;
 using api.Domain.Enuns;
+using api.Domain.Factories;
 using api.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using tests.Factories;
@@ -27,7 +28,7 @@ public class RepositoryTests
     public void TestaIncluirPesquisaRespositorio()
     {
         var pesquisaDto = PesquisaDtoFactory.CreateIncluirPesquisaDto();
-        var pesquisaEntidade = pesquisaDto.ToEntity();
+        var pesquisaEntidade = PesquisaFactory.CriarPesquisa(pesquisaDto);
         
         var result = _pesquisaRepository.Salvar(pesquisaEntidade);
         
@@ -41,7 +42,7 @@ public class RepositoryTests
     public void TestaObterPesquisaRepository()
     {
         var pesquisaDto = PesquisaDtoFactory.CreateIncluirPesquisaDto();
-        var pesquisaEntidade = pesquisaDto.ToEntity();
+        var pesquisaEntidade = PesquisaFactory.CriarPesquisa(pesquisaDto);
         
         var pesquisaSalva = _pesquisaRepository.Salvar(pesquisaEntidade);
         var pesquisaConsultaResult = _pesquisaRepository.ObterPorId(pesquisaSalva.Id);

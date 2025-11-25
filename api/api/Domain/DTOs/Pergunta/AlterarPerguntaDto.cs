@@ -12,9 +12,4 @@ public class AlterarPerguntaDto : PerguntaDto
     [MinLength(2, ErrorMessage = "É necessário informar ao menos duas altenartivas")]
     [OpcaoRepetidaValidation]
     public new List<AlterarAlternativaDto> Alternativas { get; set; }
-
-    public virtual Model.Pergunta ToEntity()
-    {
-        return new Model.Pergunta(Id, Enunciado, Alternativas.Select(a => a.ToEntity()).ToList());
-    }
 }

@@ -1,4 +1,5 @@
 using api.Domain.DTOs.Pergunta;
+using api.Domain.Factories;
 using api.Domain.Model;
 using api.Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -20,14 +21,14 @@ public class PerguntaController : ControllerBase
     [HttpPost]
     public IActionResult Incluir([FromBody] IncluirPerguntaDto perguntaDto)
     {
-        var pergunta = perguntaDto.ToEntity();
+        var pergunta = PerguntaFactory.NovaPergunta(perguntaDto);
         return Created(nameof(ObterPorId), _perguntaRepository.Salvar(pergunta).ToResponseDto());
     }
 
     [HttpPut("{id}")]
     public IActionResult Alterar(Guid id, [FromBody] AlterarPerguntaDto perguntaDto)
     {
-        var pergunta = perguntaDto.ToEntity();
+        var pergunta = PerguntaFactory.NovaPergunta(perguntaDto);
         var perguntaAtualizada = _perguntaRepository.Atualizar(id, pergunta);
         
         return perguntaAtualizada == null ?  NotFound() : Ok(perguntaAtualizada.ToResponseDto()); 

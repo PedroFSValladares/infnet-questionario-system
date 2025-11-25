@@ -1,4 +1,5 @@
 using api.Domain.DTOs.Pesquisa;
+using api.Domain.Factories;
 using api.Domain.Model;
 using api.Domain.Repositories;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -20,7 +21,8 @@ public class PesquisaController : ControllerBase
     [HttpPost]
     public IActionResult Incluir([FromBody] IncluirPesquisaDto pesquisaDto)
     {
-        var pesquisa = _pesquisaRepository.Salvar(pesquisaDto.ToEntity());
+        var pesquisaAIncluir = PesquisaFactory.CriarPesquisa(pesquisaDto);
+        var pesquisa = _pesquisaRepository.Salvar(pesquisaAIncluir);
         return Created(nameof(ObterPorId) ,pesquisa);
     }
 

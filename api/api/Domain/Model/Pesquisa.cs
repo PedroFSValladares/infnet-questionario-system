@@ -5,40 +5,57 @@ namespace api.Domain.Model;
 
 public class Pesquisa
 {
-    [Key]
-    public Guid Id { get; private set; }
-    public string Nome { get; private set; }
-    public StatusPesquisa StatusPesquisa { get; private set; }
-    public DateTime? DataDispnibilizacao { get; private set; }
-    public DateTime? DataFinalizacao { get; private set; }
-    public List<Pergunta> Perguntas { get; private set; }
+    [Key] 
+    private Guid _id;
+    private string _nome;
+    private StatusPesquisa _statusPesquisa;
+    private DateTime? _dataDispnibilizacao;
+    private DateTime? _dataFinalizacao;
+    private List<Pergunta> _perguntas;
 
-    public Pesquisa(string nome, List<Pergunta> perguntas)
+    public Guid Id
     {
-        Nome = nome;
-        Perguntas = perguntas;
-        Id = new Guid();
-        StatusPesquisa = StatusPesquisa.Criada;
+        get => _id;
+        private set => _id = value;
     }
 
-    public Pesquisa(Guid id, string nome, StatusPesquisa statusPesquisa, DateTime? dataDispnibilizacao,
-        DateTime? dataFinalizacao, List<Pergunta>? perguntas)
+    public string Nome
     {
-        Id = id;
-        Nome = nome;
-        StatusPesquisa = statusPesquisa;
-        DataDispnibilizacao = dataDispnibilizacao;
-        DataFinalizacao = dataFinalizacao;
-        Perguntas = perguntas;
+        get => _nome;
+        set => _nome = value ?? throw new ArgumentNullException(nameof(value));
     }
 
-    public Pesquisa(Guid id, string nome, StatusPesquisa statusPesquisa, List<Pergunta> perguntas)
+    public StatusPesquisa StatusPesquisa
     {
-        Id = id;
-        Nome = nome;
-        StatusPesquisa = statusPesquisa;
-        Perguntas = perguntas;
+        get => _statusPesquisa;
+        set => _statusPesquisa = value;
+    }
+
+    public DateTime? DataDispnibilizacao
+    {
+        get => _dataDispnibilizacao;
+        set => _dataDispnibilizacao = value;
+    }
+
+    public DateTime? DataFinalizacao
+    {
+        get => _dataFinalizacao;
+        set => _dataFinalizacao = value;
+    }
+
+    public List<Pergunta> Perguntas
+    {
+        get => _perguntas;
+        set => _perguntas = value ?? throw new ArgumentNullException(nameof(value));
     }
     
-    public Pesquisa(){}
+    public Pesquisa()
+    {
+        _id = Guid.NewGuid();
+    }
+
+    public Pesquisa(Guid id)
+    {
+        _id = id;
+    }
 }
