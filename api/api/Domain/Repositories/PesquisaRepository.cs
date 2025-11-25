@@ -33,6 +33,17 @@ public class PesquisaRepository : IIncludableRepository<Pesquisa>, IUpdatebleRep
     
     public Pesquisa? Atualizar(Guid id, Pesquisa entity)
     {
-        throw new NotImplementedException();
+        var pesquisa = ObterPorId(id);
+        if (pesquisa == null) return null;
+
+        pesquisa.Nome = entity.Nome;
+        pesquisa.Perguntas = entity.Perguntas;
+        pesquisa.StatusPesquisa = entity.StatusPesquisa;
+        pesquisa.DataDispnibilizacao = entity.DataDispnibilizacao;
+        pesquisa.DataFinalizacao = entity.DataFinalizacao;
+        
+        _context.Pesquisas.Update(pesquisa);
+        _context.SaveChanges();
+        return pesquisa;
     }
 }

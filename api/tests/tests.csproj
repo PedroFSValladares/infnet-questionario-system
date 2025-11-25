@@ -22,4 +22,10 @@
     <ProjectReference Include="..\api\api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="ExemplosDTO.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

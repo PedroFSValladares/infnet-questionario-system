@@ -1,5 +1,4 @@
 using api.Domain.Factories;
-using tests.Factories;
 using tests.TestServices;
 
 namespace tests.Pesquisa.Factories;
@@ -9,7 +8,7 @@ public class PesquisaFactoryTests
     [Fact]
     public void TestaCriarEntidadeAPartirDeIncluiPesquisaDtoValido()
     {
-        var pesquisaDto = PesquisaDtoFactory.CreateIncluirPesquisaDto();
+        var pesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
         var pesquisaEntidade = PesquisaFactory.CriarPesquisa(pesquisaDto);
         
         Assert.NotNull(pesquisaEntidade);
@@ -18,8 +17,9 @@ public class PesquisaFactoryTests
     }
 
     [Fact]
-    public void TestaCriarEntidadeAPartirDeAlterarPesquisaDtoValido()
+    public void TestaCriarEntidadeAPartirDeIncluiPesquisaDtoInvalido()
     {
-        var incluirPesquisaDto = PesquisaDtoFactory.CreateIncluirPesquisaDto();
+        Assert.Throws<ArgumentNullException>(() => PesquisaFactory.CriarPesquisa(Exemplos.ObterExemplosInvalidos().FirstOrDefault()));
     }
+    
 }

@@ -4,7 +4,6 @@ using api.Domain.Factories;
 using api.Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using tests.Factories;
 
 namespace tests.Pesquisa.Controller;
 
@@ -27,7 +26,7 @@ public class ControllerTests
     [Fact]
     public void TestaIncluirPesquisaController()
     {
-        var pesquisaDto = PesquisaDtoFactory.CreateIncluirPesquisaDto();
+        var pesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
         
         var result = _pesquisaController.Incluir(pesquisaDto);
         Assert.IsType<CreatedResult>(result);
@@ -36,7 +35,7 @@ public class ControllerTests
     [Fact]
     public void TestaObterPesquisaController()
     {
-        var pesquisaDto = PesquisaDtoFactory.CreateIncluirPesquisaDto();
+        var pesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
         var pesquisaEntidade = PesquisaFactory.CriarPesquisa(pesquisaDto);
         
         var pesquisaSalva = _pesquisaRepository.Salvar(pesquisaEntidade);

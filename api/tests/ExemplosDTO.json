@@ -1,0 +1,85 @@
+{
+  "Validos": [
+    {
+      "Nome": "Pesquisa XYZ",
+      "Perguntas": [
+        {
+          "Enunciado": "abcd",
+          "Alternativas":[
+            {
+              "Opcao": "A",
+              "Texto": "teste"
+            },
+            {
+              "Opcao": "B",
+              "Texto": "abcd"
+            }
+          ] 
+        },
+        {
+          "Enunciado": "abcd",
+          "Alternativas": [
+            {
+              "Opcao": "A",
+              "Texto": "teste"
+            },
+            {
+              "Opcao": "B",
+              "Texto": "abcd"
+            }
+          ]
+        },
+        {
+          "Enunciado": "abcd",
+          "Alternativas": [
+            {
+              "Opcao": "A",
+              "Texto": "teste"
+            },
+            {
+              "Opcao": "B",
+              "Texto": "abcd"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "Invalidos": [
+    {
+      "Nome": "",
+      "Perguntas": [
+        {
+          "Enunciado": "",
+          "Alternativas":[]
+        },
+        {
+          "Enunciado": null,
+          "Alternativas": [
+            {
+              "Opcao": "A",
+              "Texto": ""
+            },
+            {
+              "Opcao": "B",
+              "Texto": ""
+            }
+          ]
+        },
+        {
+          "Enunciado": "abcd",
+          "Alternativas": [
+            {
+              "Opcao": "A",
+              "Texto": null
+            },
+            {
+              "Opcao": "B",
+              "Texto": "abcd"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
