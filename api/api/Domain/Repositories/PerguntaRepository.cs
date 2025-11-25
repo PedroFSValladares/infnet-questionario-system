@@ -50,13 +50,14 @@ public class PerguntaRepository :
         return pergunta;
     }
 
-    public void Delete(Guid id)
+    public bool Delete(Guid id)
     {
         var pergunta = ObterPorId(id);
         
-        if (pergunta == null) return;
+        if (pergunta == null) return false;
         
         _context.Perguntas.Remove(pergunta);
         _context.SaveChanges();
+        return true;
     }
 }

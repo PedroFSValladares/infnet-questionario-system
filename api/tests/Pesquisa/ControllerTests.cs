@@ -5,7 +5,7 @@ using api.Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace tests.Pesquisa.Controller;
+namespace tests.Pesquisa;
 
 public class ControllerTests
 {

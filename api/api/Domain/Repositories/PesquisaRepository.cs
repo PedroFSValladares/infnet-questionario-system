@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Domain.Repositories;
 
-public class PesquisaRepository : IIncludableRepository<Pesquisa>, IUpdatebleRepository<Guid, Pesquisa>
+public class PesquisaRepository : IIncludableRepository<Pesquisa>, IUpdatebleRepository<Guid, Pesquisa>, IListableRepository<Pesquisa>, IDeletableRepository<Guid>
 {
     
     private readonly QuestionarioContext _context;
@@ -45,5 +45,21 @@ public class PesquisaRepository : IIncludableRepository<Pesquisa>, IUpdatebleRep
         _context.Pesquisas.Update(pesquisa);
         _context.SaveChanges();
         return pesquisa;
+    }
+
+    public List<Pesquisa> ListarTodos()
+    {
+        return _context.Pesquisas.ToList();
+    }
+
+    public bool Delete(Guid id)
+    {
+        var pesquuisa = ObterPorId(id);
+        
+        if (pesquuisa == null) return false;
+        
+        _context.Pesquisas.Remove(pesquuisa);
+        _context.SaveChanges();
+        return true;
     }
 }

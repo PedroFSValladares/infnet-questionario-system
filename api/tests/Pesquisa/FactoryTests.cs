@@ -1,9 +1,9 @@
 using api.Domain.Factories;
 using tests.TestServices;
 
-namespace tests.Pesquisa.Factories;
+namespace tests.Pesquisa;
 
-public class PesquisaFactoryTests
+public class FactoryTests
 {
     [Fact]
     public void TestaCriarEntidadeAPartirDeIncluiPesquisaDtoValido()

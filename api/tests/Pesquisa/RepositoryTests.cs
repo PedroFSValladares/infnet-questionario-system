@@ -5,7 +5,7 @@ using api.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using tests.TestServices;
 
-namespace tests.Pesquisa.Repository;
+namespace tests.Pesquisa;
 
 public class RepositoryTests
 {
@@ -15,7 +15,7 @@ public class RepositoryTests
 
     public RepositoryTests()
     {
-        var options = new DbContextOptionsBuilder<QuestionarioContext>().UseInMemoryDatabase("QuestionarioContext").Options;
+        var options = new DbContextOptionsBuilder<QuestionarioContext>().UseInMemoryDatabase("RepositoryTests").Options;
         _context = new QuestionarioContext(options);
         
         _pesquisaRepository = new PesquisaRepository(_context);
@@ -87,5 +87,53 @@ public class RepositoryTests
         var result = _pesquisaRepository.Atualizar(pesquisa.Id, pesquisa);
         
         Assert.Null(result);
+    }
+
+    [Fact]
+    public void TestaListarTodos()
+    {
+        var tamanhoAnterior = _context.Pesquisas.Count();
+        var registrosAInserir = 10;
+        for (int i = 0; i < registrosAInserir; i++)
+        {
+            var incluirPesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
+            var incluirPesquisaEntidade = PesquisaFactory.CriarPesquisa(incluirPesquisaDto);
+        
+            _pesquisaRepository.Salvar(incluirPesquisaEntidade);
+        }
+        
+        var result = _pesquisaRepository.ListarTodos();
+        
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.Equal(registrosAInserir + tamanhoAnterior, result.Count);
+    }
+
+    [Fact]
+    public void TestaExcluirPesquisaExistente()
+    {
+        var quantidadeDeRegistrosAntesDaDelecao = _pesquisaRepository.ListarTodos().Count;
+        var entidade = _pesquisaRepository.ListarTodos().FirstOrDefault();
+        var result = _pesquisaRepository.Delete(entidade.Id);
+        
+        var registrosAposADelecao = _pesquisaRepository.ListarTodos().Count;
+        var registrosEsperadosAposADelecao = quantidadeDeRegistrosAntesDaDelecao - 1;
+        
+        Assert.Equal(registrosEsperadosAposADelecao, registrosAposADelecao);
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void TestaExcluirPesquisaInexistente()
+    {
+        var entidade = new api.Domain.Model.Pesquisa();
+        
+        var quantidadeDeRegistrosAntesDaDelecao = _pesquisaRepository.ListarTodos().Count;
+        var result = _pesquisaRepository.Delete(entidade.Id);
+        
+        var registrosAposADelecao = _pesquisaRepository.ListarTodos().Count;
+        
+        Assert.Equal(quantidadeDeRegistrosAntesDaDelecao, registrosAposADelecao);
+        Assert.False(result);
     }
 }
