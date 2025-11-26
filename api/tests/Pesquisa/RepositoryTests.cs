@@ -71,7 +71,7 @@ public class RepositoryTests
         pesquisaAlterada.Perguntas[1].Enunciado = "TESTE TESTE TESTE";
         pesquisaAlterada.Perguntas[2].Alternativas[0].Texto = "Nada";
 
-        var alterarPesquisaResult = _pesquisaRepository.Atualizar(pesquisa.Id, pesquisa);
+        var alterarPesquisaResult = _pesquisaRepository.Atualizar(pesquisa);
         
         Assert.NotNull(alterarPesquisaResult);
         Assert.NotEqual(Guid.Empty, alterarPesquisaResult.Id);
@@ -81,10 +81,22 @@ public class RepositoryTests
     }
 
     [Fact]
+    public void TestaAlterarPesquisaRemovendoPergunta()
+    {
+        throw new NotImplementedException();
+    }
+
+    [Fact]
+    public void TestaAlterarPesquisaRemovendoAlternativaDePergunta()
+    {
+        throw new NotImplementedException();
+    }
+
+    [Fact]
     public void TestaAlterarPesquisaInexistente()
     {
         var pesquisa = new api.Domain.Model.Pesquisa();
-        var result = _pesquisaRepository.Atualizar(pesquisa.Id, pesquisa);
+        var result = _pesquisaRepository.Atualizar(pesquisa);
         
         Assert.Null(result);
     }

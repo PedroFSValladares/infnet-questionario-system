@@ -43,14 +43,21 @@ public class ServiceTests
         
         var result = _pesquisaService.IncluirPesquisa(pesquisaEntidade);
 
-        var alterarPesquisaDto = PesquisaConverter.ConverterEntidadeParaAlterarPesquisaDto(result);
+        result.Nome = "TESTE 123";
+        result.Perguntas[0].Enunciado = "4321";
+
+        var alterarResult = _pesquisaService.AlterarPesquisa(result);
+        
+        Assert.NotNull(alterarResult);
+        Assert.Equal("TESTE 123", alterarResult.Nome);
+        Assert.Equal("4321",  alterarResult.Perguntas[0].Enunciado);
     }
 
     [Fact]
     public void TestaAlterarPesquisaInexistente()
     {
         var pesquisa = new api.Domain.Model.Pesquisa();
-        var result = _pesquisaService.AlterarPesquisa(pesquisa.Id, pesquisa);
+        var result = _pesquisaService.AlterarPesquisa(pesquisa);
         
         Assert.Null(result);
     }
@@ -102,12 +109,21 @@ public class ServiceTests
     [Fact]
     public void TestaDeletarPesquisaExistente()
     {
-        throw new NotImplementedException(); //TODO
+        var quantidadeDeRegistrosInicial = _context.Pesquisas.Count();
+        var pesquisaADeletar = _pesquisaService.ListarPesquisas().FirstOrDefault();
+        
+        _pesquisaService.ExcluirPesquisa(pesquisaADeletar.Id);
+        
+        Assert.Equal(quantidadeDeRegistrosInicial - 1, _context.Pesquisas.Count());
     }
 
     [Fact]
     public void TestaDeletarPesquisaInexistente()
     {
-        throw new NotImplementedException(); //TODO
+        var quantidadeDeRegistrosInicial = _context.Pesquisas.Count();
+        
+        _pesquisaService.ExcluirPesquisa(Guid.NewGuid());
+        
+        Assert.Equal(quantidadeDeRegistrosInicial, _context.Pesquisas.Count());
     }
 }

@@ -1,6 +1,6 @@
 namespace api.Domain.Interfaces;
 
-public interface IUpdatebleRepository<in TId, TEntity>
+public interface IUpdatebleRepository<TEntity>
 {
-    public TEntity? Atualizar(TId id, TEntity entity);
+    public TEntity? Atualizar(TEntity entity);
 }

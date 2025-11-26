@@ -15,4 +15,15 @@ public static class PesquisaFactory
 
         return pesquisa;
     }
+    
+    public static Pesquisa CriarPesquisa(AlterarPesquisaDto alterarPesquisaDto)
+    {
+        Pesquisa pesquisa = new Pesquisa(alterarPesquisaDto.Id)
+        {
+            Nome = alterarPesquisaDto.Nome,
+            Perguntas = alterarPesquisaDto.Perguntas.Select(PerguntaFactory.NovaPergunta).ToList()
+        };
+
+        return pesquisa;
+    }
 }

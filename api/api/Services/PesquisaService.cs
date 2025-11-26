@@ -17,9 +17,9 @@ public class PesquisaService
         return _pesquisaRepository.Salvar(pesquisa);
     }
 
-    public Pesquisa? AlterarPesquisa(Guid id, Pesquisa pesquisaAAlterar)
+    public Pesquisa? AlterarPesquisa(Pesquisa pesquisaAAlterar)
     {
-        return _pesquisaRepository.Atualizar(id, pesquisaAAlterar);
+        return _pesquisaRepository.Atualizar(pesquisaAAlterar);
     }
 
     public List<Pesquisa> ListarPesquisas()

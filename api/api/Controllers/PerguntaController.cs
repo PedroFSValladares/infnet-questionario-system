@@ -29,7 +29,7 @@ public class PerguntaController : ControllerBase
     public IActionResult Alterar(Guid id, [FromBody] AlterarPerguntaDto perguntaDto)
     {
         var pergunta = PerguntaFactory.NovaPergunta(perguntaDto);
-        var perguntaAtualizada = _perguntaRepository.Atualizar(id, pergunta);
+        var perguntaAtualizada = _perguntaRepository.Atualizar(pergunta);
         
         return perguntaAtualizada == null ?  NotFound() : Ok(perguntaAtualizada.ToResponseDto()); 
     }
