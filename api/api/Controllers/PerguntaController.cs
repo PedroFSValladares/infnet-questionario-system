@@ -19,39 +19,39 @@ public class PerguntaController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Incluir([FromBody] IncluirPerguntaDto perguntaDto)
+    public IActionResult IncluirAsync([FromBody] IncluirPerguntaDto perguntaDto)
     {
         var pergunta = PerguntaFactory.NovaPergunta(perguntaDto);
-        return Created(nameof(ObterPorId), _perguntaRepository.Salvar(pergunta).ToResponseDto());
+        return Created(nameof(ObterPorIdAsync), _perguntaRepository.SalvarAsync(pergunta));
     }
 
     [HttpPut("{id}")]
-    public IActionResult Alterar(Guid id, [FromBody] AlterarPerguntaDto perguntaDto)
+    public async Task<IActionResult> Alterar(Guid id, [FromBody] AlterarPerguntaDto perguntaDto)
     {
         var pergunta = PerguntaFactory.NovaPergunta(perguntaDto);
-        var perguntaAtualizada = _perguntaRepository.Atualizar(pergunta);
+        var perguntaAtualizada = await _perguntaRepository.AtualizarAsync(pergunta);
         
         return perguntaAtualizada == null ?  NotFound() : Ok(perguntaAtualizada.ToResponseDto()); 
     }
 
     [HttpDelete("{id}")]
-    public IActionResult Excluir(Guid id)
+    public async Task<IActionResult> ExcluirAsync(Guid id)
     {
-        _perguntaRepository.Delete(id);
+        await _perguntaRepository.DeleteAsync(id);
         return NoContent();
     }
     
     [HttpGet]
-    public IActionResult ObterTodos()
+    public async Task<IActionResult> ObterTodosAsync()
     {
-        var perguntas =  _perguntaRepository.ObterTodos();
+        var perguntas = await _perguntaRepository.ObterTodosAsync();
         return perguntas.Count > 0 ? Ok(perguntas.Select(e => e.ToPerguntaResumidaResponseDto())) : NoContent();
     }
     
     [HttpGet("{id}")]
-    public IActionResult ObterPorId(string id)
+    public async Task<IActionResult> ObterPorIdAsync(string id)
     {
-        var pergunta = _perguntaRepository.ObterPorId(new Guid(id));
+        var pergunta = await _perguntaRepository.ObterPorIdAsync(new Guid(id));
         return pergunta != null ? Ok(pergunta.ToResponseDto()) : NotFound();
     }
 }

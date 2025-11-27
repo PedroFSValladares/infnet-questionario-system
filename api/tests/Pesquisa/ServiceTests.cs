@@ -23,12 +23,12 @@ public class ServiceTests
     }
 
     [Fact]
-    public void TestaIncluirPesquisaValida()
+    public async Task TestaIncluirPesquisaValida()
     {
         var pesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
         var pesquisaEntidade = PesquisaFactory.CriarPesquisa(pesquisaDto);
         
-        var result = _pesquisaService.IncluirPesquisa(pesquisaEntidade);
+        var result = await _pesquisaService.IncluirPesquisaAsync(pesquisaEntidade);
         
         Assert.NotNull(result);
         Assert.NotEqual(Guid.Empty, result.Id);
@@ -36,17 +36,17 @@ public class ServiceTests
     }
 
     [Fact]
-    public void TestaAlterarPesquisaValida()
+    public async Task TestaAlterarPesquisaValida()
     {
         var pesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
         var pesquisaEntidade = PesquisaFactory.CriarPesquisa(pesquisaDto);
         
-        var result = _pesquisaService.IncluirPesquisa(pesquisaEntidade);
+        var result = await _pesquisaService.IncluirPesquisaAsync(pesquisaEntidade);
 
         result.Nome = "TESTE 123";
         result.Perguntas[0].Enunciado = "4321";
 
-        var alterarResult = _pesquisaService.AlterarPesquisa(result);
+        var alterarResult = await _pesquisaService.AlterarPesquisaAsync(result);
         
         Assert.NotNull(alterarResult);
         Assert.Equal("TESTE 123", alterarResult.Nome);
@@ -57,13 +57,13 @@ public class ServiceTests
     public void TestaAlterarPesquisaInexistente()
     {
         var pesquisa = new api.Domain.Model.Pesquisa();
-        var result = _pesquisaService.AlterarPesquisa(pesquisa);
+        var result = _pesquisaService.AlterarPesquisaAsync(pesquisa);
         
         Assert.Null(result);
     }
 
     [Fact]
-    public void TestaListarPesquisas()
+    public async Task TestaListarPesquisas()
     {
         var tamanhoAnterior = _context.Pesquisas.Count();
         var registrosAInserir = 10;
@@ -73,10 +73,10 @@ public class ServiceTests
             var pesquisaDto =  Exemplos.ObterExemplosValidos().FirstOrDefault();
             var pesquisaEntidade = PesquisaFactory.CriarPesquisa(pesquisaDto);
             
-            _pesquisaService.IncluirPesquisa(pesquisaEntidade);
+            await _pesquisaService.IncluirPesquisaAsync(pesquisaEntidade);
         }
         
-        var result = _pesquisaService.ListarPesquisas();
+        var result = await _pesquisaService.ListarPesquisasAsync();
         
         Assert.NotNull(result);
         Assert.NotEmpty(result);
@@ -84,14 +84,14 @@ public class ServiceTests
     }
 
     [Fact]
-    public void TestaBuscarPesquisaExistente()
+    public async Task TestaBuscarPesquisaExistente()
     {
         var pesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
         var pesquisaEntidade = PesquisaFactory.CriarPesquisa(pesquisaDto);
         
-        var inclusaoResult = _pesquisaService.IncluirPesquisa(pesquisaEntidade);
+        var inclusaoResult = await _pesquisaService.IncluirPesquisaAsync(pesquisaEntidade);
         
-        var consultaResult = _pesquisaService.BuscarPesquisaPorId(inclusaoResult.Id);
+        var consultaResult = await _pesquisaService.BuscarPesquisaPorIdAsync(inclusaoResult.Id);
         
         Assert.NotNull(consultaResult);
         Assert.Equal(inclusaoResult.Id, consultaResult.Id);
@@ -99,30 +99,31 @@ public class ServiceTests
     }
 
     [Fact]
-    public void TestaBuscarPesquisaExistenteInexistente()
+    public async Task TestaBuscarPesquisaExistenteInexistente()
     {
-        var result = _pesquisaService.BuscarPesquisaPorId(Guid.NewGuid());
+        var result = await _pesquisaService.BuscarPesquisaPorIdAsync(Guid.NewGuid());
         
         Assert.Null(result);
     }
 
     [Fact]
-    public void TestaDeletarPesquisaExistente()
+    public async Task TestaDeletarPesquisaExistente()
     {
         var quantidadeDeRegistrosInicial = _context.Pesquisas.Count();
-        var pesquisaADeletar = _pesquisaService.ListarPesquisas().FirstOrDefault();
+        var consulta = await _pesquisaService.ListarPesquisasAsync();
+        var pesquisaADeletar = consulta.FirstOrDefault();
         
-        _pesquisaService.ExcluirPesquisa(pesquisaADeletar.Id);
+        await _pesquisaService.ExcluirPesquisaAsync(pesquisaADeletar.Id);
         
         Assert.Equal(quantidadeDeRegistrosInicial - 1, _context.Pesquisas.Count());
     }
 
     [Fact]
-    public void TestaDeletarPesquisaInexistente()
+    public async Task TestaDeletarPesquisaInexistente()
     {
         var quantidadeDeRegistrosInicial = _context.Pesquisas.Count();
         
-        _pesquisaService.ExcluirPesquisa(Guid.NewGuid());
+        await _pesquisaService.ExcluirPesquisaAsync(Guid.NewGuid());
         
         Assert.Equal(quantidadeDeRegistrosInicial, _context.Pesquisas.Count());
     }

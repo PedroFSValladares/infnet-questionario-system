@@ -23,12 +23,12 @@ public class RepositoryTests
     
     
     [Fact]
-    public void TestaIncluirPesquisaValida()
+    public async Task TestaIncluirPesquisaValida()
     {
         var pesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
         var pesquisaEntidade = PesquisaFactory.CriarPesquisa(pesquisaDto);
         
-        var result = _pesquisaRepository.Salvar(pesquisaEntidade);
+        var result = await _pesquisaRepository.SalvarAsync(pesquisaEntidade);
         
         Assert.NotNull(result);
         Assert.NotEqual(Guid.Empty, result.Id);
@@ -37,13 +37,13 @@ public class RepositoryTests
     }
     
     [Fact]
-    public void TestaObterPesquisaExistente()
+    public async Task TestaObterPesquisaExistente()
     {
         var pesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
         var pesquisaEntidade = PesquisaFactory.CriarPesquisa(pesquisaDto);
         
-        var pesquisaSalva = _pesquisaRepository.Salvar(pesquisaEntidade);
-        var pesquisaConsultaResult = _pesquisaRepository.ObterPorId(pesquisaSalva.Id);
+        var pesquisaSalva = await _pesquisaRepository.SalvarAsync(pesquisaEntidade);
+        var pesquisaConsultaResult = await _pesquisaRepository.ObterPorIdAsync(pesquisaSalva.Id);
         
         Assert.NotEqual(Guid.Empty, pesquisaConsultaResult.Id);
         Assert.Equal(pesquisaSalva, pesquisaConsultaResult);
@@ -52,26 +52,26 @@ public class RepositoryTests
     [Fact]
     public void TestaObterPesquisaInexistente()
     {
-        var result = _pesquisaRepository.ObterPorId(Guid.Empty);
-        var result2 = _pesquisaRepository.ObterPorId(Guid.NewGuid());
+        var result = _pesquisaRepository.ObterPorIdAsync(Guid.Empty);
+        var result2 = _pesquisaRepository.ObterPorIdAsync(Guid.NewGuid());
         Assert.Null(result);
         Assert.Null(result2);
     }
     
     [Fact]
-    public void TestaAlterarPesquisaExistente()
+    public async Task TestaAlterarPesquisaExistente()
     {
         var incluirPesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
         var incluirPesquisaEntidade = PesquisaFactory.CriarPesquisa(incluirPesquisaDto);
         
-        var pesquisa = _pesquisaRepository.Salvar(incluirPesquisaEntidade);
+        var pesquisa = await _pesquisaRepository.SalvarAsync(incluirPesquisaEntidade);
         var pesquisaAlterada = pesquisa;
 
         pesquisaAlterada.Nome = "ABCD EEEEE KL";
         pesquisaAlterada.Perguntas[1].Enunciado = "TESTE TESTE TESTE";
         pesquisaAlterada.Perguntas[2].Alternativas[0].Texto = "Nada";
 
-        var alterarPesquisaResult = _pesquisaRepository.Atualizar(pesquisa);
+        var alterarPesquisaResult = await _pesquisaRepository.AtualizarAsync(pesquisa);
         
         Assert.NotNull(alterarPesquisaResult);
         Assert.NotEqual(Guid.Empty, alterarPesquisaResult.Id);
@@ -96,13 +96,13 @@ public class RepositoryTests
     public void TestaAlterarPesquisaInexistente()
     {
         var pesquisa = new api.Domain.Model.Pesquisa();
-        var result = _pesquisaRepository.Atualizar(pesquisa);
+        var result = _pesquisaRepository.AtualizarAsync(pesquisa);
         
         Assert.Null(result);
     }
 
     [Fact]
-    public void TestaListarTodos()
+    public async Task TestaListarTodos()
     {
         var tamanhoAnterior = _context.Pesquisas.Count();
         var registrosAInserir = 10;
@@ -111,10 +111,10 @@ public class RepositoryTests
             var incluirPesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
             var incluirPesquisaEntidade = PesquisaFactory.CriarPesquisa(incluirPesquisaDto);
         
-            _pesquisaRepository.Salvar(incluirPesquisaEntidade);
+            await _pesquisaRepository.SalvarAsync(incluirPesquisaEntidade);
         }
         
-        var result = _pesquisaRepository.ListarTodos();
+        var result = await _pesquisaRepository.ListarTodosAsync();
         
         Assert.NotNull(result);
         Assert.NotEmpty(result);
@@ -122,13 +122,15 @@ public class RepositoryTests
     }
 
     [Fact]
-    public void TestaExcluirPesquisaExistente()
+    public async Task TestaExcluirPesquisaExistente()
     {
-        var quantidadeDeRegistrosAntesDaDelecao = _pesquisaRepository.ListarTodos().Count;
-        var entidade = _pesquisaRepository.ListarTodos().FirstOrDefault();
-        var result = _pesquisaRepository.Delete(entidade.Id);
+        var consulta = await _pesquisaRepository.ListarTodosAsync();
+        var quantidadeDeRegistrosAntesDaDelecao = consulta.Count;
+        var entidade = await _pesquisaRepository.ListarTodosAsync();
+        var result = await _pesquisaRepository.DeleteAsync(entidade.FirstOrDefault().Id);
         
-        var registrosAposADelecao = _pesquisaRepository.ListarTodos().Count;
+        var consultaAposDelecao = await _pesquisaRepository.ListarTodosAsync();
+        var registrosAposADelecao = consultaAposDelecao.Count;
         var registrosEsperadosAposADelecao = quantidadeDeRegistrosAntesDaDelecao - 1;
         
         Assert.Equal(registrosEsperadosAposADelecao, registrosAposADelecao);
@@ -136,14 +138,16 @@ public class RepositoryTests
     }
 
     [Fact]
-    public void TestaExcluirPesquisaInexistente()
+    public async Task TestaExcluirPesquisaInexistente()
     {
         var entidade = new api.Domain.Model.Pesquisa();
-        
-        var quantidadeDeRegistrosAntesDaDelecao = _pesquisaRepository.ListarTodos().Count;
-        var result = _pesquisaRepository.Delete(entidade.Id);
-        
-        var registrosAposADelecao = _pesquisaRepository.ListarTodos().Count;
+
+        var consulta = await _pesquisaRepository.ListarTodosAsync();
+        var quantidadeDeRegistrosAntesDaDelecao = consulta.Count;
+        var result = await _pesquisaRepository.DeleteAsync(entidade.Id);
+
+        consulta = await _pesquisaRepository.ListarTodosAsync();
+        var registrosAposADelecao = consulta.Count;
         
         Assert.Equal(quantidadeDeRegistrosAntesDaDelecao, registrosAposADelecao);
         Assert.False(result);

@@ -15,25 +15,25 @@ public class PesquisaRepository : IIncludableRepository<Pesquisa>, IUpdatebleRep
         _context = context;
     }
     
-    public Pesquisa Salvar(Pesquisa entity)
+    public async Task<Pesquisa> SalvarAsync(Pesquisa entity)
     {
-        var pesquisa = _context.Pesquisas.Add(entity).Entity;
-        _context.SaveChanges();
-        return pesquisa;
+        var pesquisa = await _context.Pesquisas.AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return pesquisa.Entity;
     }
 
-    public Pesquisa? ObterPorId(Guid id)
+    public async Task<Pesquisa?> ObterPorIdAsync(Guid id)
     {
-        var pesquisa = _context.Pesquisas
+        var pesquisa = await _context.Pesquisas
             .Where(p => p.Id == id)
             .Include(p => p.Perguntas)
-            .FirstOrDefault();
+            .FirstOrDefaultAsync();
         return pesquisa;
     }
     
-    public Pesquisa? Atualizar(Pesquisa entity)
+    public async Task<Pesquisa?> AtualizarAsync(Pesquisa entity)
     {
-        var pesquisa = ObterPorId(entity.Id);
+        var pesquisa = await ObterPorIdAsync(entity.Id);
         if (pesquisa == null) return null;
 
         pesquisa.Nome = entity.Nome;
@@ -87,23 +87,23 @@ public class PesquisaRepository : IIncludableRepository<Pesquisa>, IUpdatebleRep
         }
         
         _context.Pesquisas.Update(pesquisa);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return pesquisa;
     }
 
-    public List<Pesquisa> ListarTodos()
+    public async Task<List<Pesquisa>> ListarTodosAsync()
     {
-        return _context.Pesquisas.ToList();
+        return await _context.Pesquisas.ToListAsync();
     }
 
-    public bool Delete(Guid id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        var pesquuisa = ObterPorId(id);
+        var pesquuisa = await ObterPorIdAsync(id);
         
         if (pesquuisa == null) return false;
         
         _context.Pesquisas.Remove(pesquuisa);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return true;
     }
 }

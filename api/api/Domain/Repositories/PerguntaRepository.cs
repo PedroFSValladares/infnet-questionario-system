@@ -15,29 +15,29 @@ public class PerguntaRepository :
         _context = context;
     }
     
-    public Pergunta Salvar(Pergunta entity)
+    public async Task<Pergunta> SalvarAsync(Pergunta entity)
     {
-        _context.Perguntas.Add(entity);
-        _context.SaveChanges();
-        return entity;
+        var result = await _context.Perguntas.AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return result.Entity;
     }
 
-    public Pergunta? ObterPorId(Guid id)
+    public async Task<Pergunta?> ObterPorIdAsync(Guid id)
     {
-        return _context.Perguntas
+        return await _context.Perguntas
             .Where(p => p.Id == id)
             .Include(pergunta => pergunta.Alternativas)
-            .FirstOrDefault();
+            .FirstOrDefaultAsync();
     }
 
-    public List<Pergunta> ObterTodos()
+    public async Task<List<Pergunta>> ObterTodosAsync()
     {
-        return  _context.Perguntas.ToList();
+        return  await _context.Perguntas.ToListAsync();
     }
 
-    public Pergunta? Atualizar(Pergunta entity)
+    public async Task<Pergunta?> AtualizarAsync(Pergunta entity)
     {
-        var pergunta = ObterPorId(entity.Id);
+        var pergunta = await ObterPorIdAsync(entity.Id);
 
         if (pergunta == null)
             return null;
@@ -46,18 +46,18 @@ public class PerguntaRepository :
         pergunta.Alternativas = entity.Alternativas;
 
         _context.Perguntas.Update(pergunta);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return pergunta;
     }
 
-    public bool Delete(Guid id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        var pergunta = ObterPorId(id);
+        var pergunta = await ObterPorIdAsync(id);
         
         if (pergunta == null) return false;
         
         _context.Perguntas.Remove(pergunta);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
         return true;
     }
 }

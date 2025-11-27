@@ -12,28 +12,28 @@ public class PesquisaService
         _pesquisaRepository = pesquisaRepository;
     }
 
-    public Pesquisa IncluirPesquisa(Pesquisa pesquisa)
+    public async Task<Pesquisa> IncluirPesquisaAsync(Pesquisa pesquisa)
     {
-        return _pesquisaRepository.Salvar(pesquisa);
+        return await _pesquisaRepository.SalvarAsync(pesquisa);
     }
 
-    public Pesquisa? AlterarPesquisa(Pesquisa pesquisaAAlterar)
+    public async Task<Pesquisa?> AlterarPesquisaAsync(Pesquisa pesquisaAAlterar)
     {
-        return _pesquisaRepository.Atualizar(pesquisaAAlterar);
+        return await _pesquisaRepository.AtualizarAsync(pesquisaAAlterar);
     }
 
-    public List<Pesquisa> ListarPesquisas()
+    public async Task<List<Pesquisa>> ListarPesquisasAsync()
     {
-        return _pesquisaRepository.ListarTodos();
+        return await _pesquisaRepository.ListarTodosAsync();
     }
 
-    public Pesquisa? BuscarPesquisaPorId(Guid id)
+    public async Task<Pesquisa?> BuscarPesquisaPorIdAsync(Guid id)
     {
-        return _pesquisaRepository.ObterPorId(id);
+        return await _pesquisaRepository.ObterPorIdAsync(id);
     }
 
-    public void ExcluirPesquisa(Guid id)
+    public async Task<bool> ExcluirPesquisaAsync(Guid id)
     {
-        _pesquisaRepository.Delete(id);
+        return await _pesquisaRepository.DeleteAsync(id);
     }
 }

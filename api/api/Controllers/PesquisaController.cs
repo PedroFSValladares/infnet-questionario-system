@@ -1,9 +1,6 @@
 using api.Domain.DTOs.Pesquisa;
 using api.Domain.Factories;
-using api.Domain.Model;
-using api.Domain.Repositories;
 using api.Services;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers;
@@ -20,24 +17,24 @@ public class PesquisaController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Incluir([FromBody] IncluirPesquisaDto pesquisaDto)
+    public async Task<IActionResult> Incluir([FromBody] IncluirPesquisaDto pesquisaDto)
     {
         var pesquisaAIncluir = PesquisaFactory.CriarPesquisa(pesquisaDto);
-        var pesquisa = _pesquisaService.IncluirPesquisa(pesquisaAIncluir);
+        var pesquisa = await _pesquisaService.IncluirPesquisaAsync(pesquisaAIncluir);
         return Created(nameof(ObterPorId), pesquisa);
     }
 
     [HttpGet("{id}")]
     public IActionResult ObterPorId(Guid id)
     {
-        var pesquisa = _pesquisaService.BuscarPesquisaPorId(id);
+        var pesquisa = _pesquisaService.BuscarPesquisaPorIdAsync(id);
         return pesquisa != null ? Ok(pesquisa) : NotFound();
     }
 
     [HttpGet]
-    public IActionResult ObterTodos()
+    public async Task<IActionResult> ObterTodos()
     {
-        var pesquisas = _pesquisaService.ListarPesquisas();
+        var pesquisas = await _pesquisaService.ListarPesquisasAsync();
         return pesquisas.Count > 0 ? Ok(pesquisas) : NoContent();
     }
 
@@ -45,7 +42,7 @@ public class PesquisaController : ControllerBase
     public IActionResult Alterar([FromBody] AlterarPesquisaDto pesquisaDto)
     {
         var pesquisa = PesquisaFactory.CriarPesquisa(pesquisaDto);
-        var result = _pesquisaService.AlterarPesquisa(pesquisa);
+        var result = _pesquisaService.AlterarPesquisaAsync(pesquisa);
         return result != null ? Ok(result) : NotFound();
     }
 }

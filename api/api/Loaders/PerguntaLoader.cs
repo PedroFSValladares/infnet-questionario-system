@@ -65,7 +65,7 @@ public class PerguntaLoader : BackgroundService
                         Alternativas = alternativas
                     };
                     PerguntaRepository repository = scope.ServiceProvider.GetRequiredService<PerguntaRepository>(); 
-                    repository.Salvar(pergunta);
+                    repository.SalvarAsync(pergunta);
                     _logger.LogInformation($"Pergunta: {pergunta}");
                 }
             }

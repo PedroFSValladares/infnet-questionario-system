@@ -2,5 +2,5 @@ namespace api.Domain.Interfaces;
 
 public interface IIncludableRepository<TEntity>
 {
-    public TEntity Salvar(TEntity entity);
+    public Task<TEntity> SalvarAsync(TEntity entity);
 }

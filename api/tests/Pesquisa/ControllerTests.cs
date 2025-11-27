@@ -31,23 +31,23 @@ public class ControllerTests
     }
     
     [Fact]
-    public void TestaIncluirPesquisaController()
+    public async Task TestaIncluirPesquisaController()
     {
         var pesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
         
-        var result = _pesquisaController.Incluir(pesquisaDto);
-        var registros = _pesquisaService.ListarPesquisas();
+        var result = await _pesquisaController.Incluir(pesquisaDto);
+        var registros = await _pesquisaService.ListarPesquisasAsync();
         Assert.IsType<CreatedResult>(result);
         Assert.NotEmpty(registros);
     }
     
     [Fact]
-    public void TestaObterPesquisaController()
+    public async Task TestaObterPesquisaController()
     {
         var pesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
         var pesquisaEntidade = PesquisaFactory.CriarPesquisa(pesquisaDto);
         
-        var pesquisaSalva = _pesquisaRepository.Salvar(pesquisaEntidade);
+        var pesquisaSalva = await _pesquisaRepository.SalvarAsync(pesquisaEntidade);
         
         var consultaResult = _pesquisaController.ObterPorId(pesquisaSalva.Id);
         Assert.IsType<OkObjectResult>(consultaResult);
@@ -68,12 +68,12 @@ public class ControllerTests
     }
     
     [Fact]
-    public void TestaAlterarPesquisaController()
+    public async Task TestaAlterarPesquisaController()
     {
         var incluirPesquisaDto =  Exemplos.ObterExemplosValidos().FirstOrDefault();
         var pesquisaEntity = PesquisaFactory.CriarPesquisa(incluirPesquisaDto);
         
-        var pesquisaInclusa = _pesquisaService.IncluirPesquisa(pesquisaEntity);
+        var pesquisaInclusa = await _pesquisaService.IncluirPesquisaAsync(pesquisaEntity);
         
         var alterarPesquisaDto = PesquisaConverter.ConverterEntidadeParaAlterarPesquisaDto(pesquisaInclusa);
 
