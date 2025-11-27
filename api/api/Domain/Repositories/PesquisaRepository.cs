@@ -18,7 +18,6 @@ public class PesquisaRepository : IIncludableRepository<Pesquisa>, IUpdatebleRep
     public async Task<Pesquisa> SalvarAsync(Pesquisa entity)
     {
         var pesquisa = await _context.Pesquisas.AddAsync(entity);
-        await _context.SaveChangesAsync();
         return pesquisa.Entity;
     }
 
@@ -64,7 +63,6 @@ public class PesquisaRepository : IIncludableRepository<Pesquisa>, IUpdatebleRep
             }
         }
         
-        await _context.SaveChangesAsync();
         return pesquisa;
     }
 
@@ -80,8 +78,12 @@ public class PesquisaRepository : IIncludableRepository<Pesquisa>, IUpdatebleRep
         if (pesquuisa == null) return false;
         
         _context.Pesquisas.Remove(pesquuisa);
-        await _context.SaveChangesAsync();
         return true;
+    }
+    
+    public async Task CommitChanges()
+    {
+        await _context.SaveChangesAsync();
     }
 
     private void AtualizarAlternativas(List<Alternativa> alternativasExistentes, List<Alternativa> alternativasDto)
@@ -106,4 +108,5 @@ public class PesquisaRepository : IIncludableRepository<Pesquisa>, IUpdatebleRep
             }
         }
     }
+
 }

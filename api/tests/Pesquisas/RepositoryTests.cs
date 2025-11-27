@@ -11,18 +11,6 @@ namespace tests.Pesquisas;
 public class RepositoryTests : IAsyncLifetime
 {
     
-    private QuestionarioContext _context;
-    private PesquisaRepository _pesquisaRepository;
-
-    public RepositoryTests()
-    {
-        var options = new DbContextOptionsBuilder<QuestionarioContext>().UseInMemoryDatabase("RepositoryTests").Options;
-        _context = new QuestionarioContext(options);
-        
-        _pesquisaRepository = new PesquisaRepository(_context);
-    }
-
-    
     [Fact]
     public async Task TestaIncluirPesquisaValida()
     {
@@ -31,6 +19,9 @@ public class RepositoryTests : IAsyncLifetime
         var pesquisa = ObterPesquisaTeste();
 
         await pesquisaRepository.SalvarAsync(pesquisa);
+        await pesquisaRepository.CommitChanges();
+        
+        context.ChangeTracker.Clear();
         
         var result = await context.Pesquisas.FindAsync(pesquisa.Id);
         Assert.NotNull(result);
@@ -44,6 +35,8 @@ public class RepositoryTests : IAsyncLifetime
         var pesquisa = ObterPesquisaTeste();
         await context.Pesquisas.AddAsync(pesquisa);
         await context.SaveChangesAsync();
+        
+        context.ChangeTracker.Clear();
         
         var pesquisaConsultaResult = await pesquisaRepository.ObterPorIdAsync(pesquisa.Id);
         
@@ -61,6 +54,8 @@ public class RepositoryTests : IAsyncLifetime
         
         await context.Pesquisas.AddAsync(pesquisa);
         
+        context.ChangeTracker.Clear();
+        
         var result = await pesquisaRepository.ObterPorIdAsync(Guid.Empty);
         var result2 = await pesquisaRepository.ObterPorIdAsync(Guid.NewGuid());
         
@@ -77,15 +72,16 @@ public class RepositoryTests : IAsyncLifetime
         await context.Pesquisas.AddAsync(pesquisa);
         await context.SaveChangesAsync();
         
-        _context.ChangeTracker.Clear();
+        context.ChangeTracker.Clear();
 
         var pesquisaEditada = ObterPesquisaTesteComIdPreenchidos(pesquisa);
         pesquisaEditada.Nome = "teste 2";
         pesquisaEditada.Perguntas[0].Enunciado = "enunciado 2";
         pesquisaEditada.Perguntas[0].Alternativas[0].Texto = "Gelo";
         await pesquisaRepository.AtualizarAsync(pesquisaEditada);
+        await pesquisaRepository.CommitChanges();
         
-        _context.ChangeTracker.Clear();
+        context.ChangeTracker.Clear();
 
         var result = await context.Pesquisas
             .Where(r => r.Id == pesquisaEditada.Id)
@@ -112,8 +108,9 @@ public class RepositoryTests : IAsyncLifetime
         var pesquisaEditada = ObterPesquisaTesteComIdPreenchidos(pesquisa);
         pesquisaEditada.Perguntas.RemoveAt(1);
         await pesquisaRepository.AtualizarAsync(pesquisaEditada);
+        await pesquisaRepository.CommitChanges();
         
-        _context.ChangeTracker.Clear();
+        context.ChangeTracker.Clear();
         
         var result = await context.Pesquisas
             .Where(r => r.Id == pesquisaEditada.Id)
@@ -150,8 +147,9 @@ public class RepositoryTests : IAsyncLifetime
             }
         });
         await pesquisaRepository.AtualizarAsync(pesquisaEditada);
+        await pesquisaRepository.CommitChanges();
         
-        _context.ChangeTracker.Clear();
+        context.ChangeTracker.Clear();
         
         var result = await context.Pesquisas
             .Where(r => r.Id == pesquisaEditada.Id)
@@ -173,11 +171,14 @@ public class RepositoryTests : IAsyncLifetime
         await context.SaveChangesAsync();
         
         context.ChangeTracker.Clear();
+        
+        context.ChangeTracker.Clear();
         var pesquisaEditada = ObterPesquisaTesteComIdPreenchidos(pesquisa);
         pesquisaEditada.Perguntas[0].Alternativas.RemoveAt(0);
         await pesquisaRepository.AtualizarAsync(pesquisaEditada);
+        await pesquisaRepository.CommitChanges();
         
-        _context.ChangeTracker.Clear();
+        context.ChangeTracker.Clear();
         
         var result = await context.Pesquisas
             .Where(r => r.Id == pesquisaEditada.Id)
@@ -199,6 +200,7 @@ public class RepositoryTests : IAsyncLifetime
         await context.SaveChangesAsync();
         
         context.ChangeTracker.Clear();
+        
         var pesquisaEditada = ObterPesquisaTesteComIdPreenchidos(pesquisa);
         pesquisaEditada.Perguntas[0].Alternativas.Add(new Alternativa()
         {
@@ -206,8 +208,9 @@ public class RepositoryTests : IAsyncLifetime
             Texto = "abcde",
         });
         await pesquisaRepository.AtualizarAsync(pesquisaEditada);
+        await pesquisaRepository.CommitChanges();
         
-        _context.ChangeTracker.Clear();
+        context.ChangeTracker.Clear();
         
         var result = await context.Pesquisas
             .Where(r => r.Id == pesquisaEditada.Id)
@@ -231,6 +234,7 @@ public class RepositoryTests : IAsyncLifetime
             await context.Pesquisas.AddAsync(pesquisa);
         }
         await context.SaveChangesAsync();
+        context.ChangeTracker.Clear();
         
         var result = await pesquisaRepository.ListarTodosAsync();
         
@@ -245,12 +249,15 @@ public class RepositoryTests : IAsyncLifetime
         var context = GetContext(Guid.NewGuid().ToString());
         var pesquisaRepository = new PesquisaRepository(context);
         var pesquisa = ObterPesquisaTeste();
-        _context.Pesquisas.Add(pesquisa);
-        await _context.SaveChangesAsync();
+        context.Pesquisas.Add(pesquisa);
+        await context.SaveChangesAsync();
         
-        var retorno = await _pesquisaRepository.DeleteAsync(pesquisa.Id);
+        var retorno = await pesquisaRepository.DeleteAsync(pesquisa.Id);
+        await pesquisaRepository.CommitChanges();
         
-        var result = await _context.Pesquisas.FindAsync(pesquisa.Id);
+        context.ChangeTracker.Clear();
+        
+        var result = await context.Pesquisas.FindAsync(pesquisa.Id);
         Assert.True(retorno);
         Assert.Null(result);
     }
@@ -324,9 +331,8 @@ public class RepositoryTests : IAsyncLifetime
         return Task.CompletedTask;
     }
 
-    async Task IAsyncLifetime.DisposeAsync()
+    Task IAsyncLifetime.DisposeAsync()
     {
-        await _context.Database.EnsureDeletedAsync();
-        await _context.DisposeAsync();
+        return Task.CompletedTask;
     }
 }

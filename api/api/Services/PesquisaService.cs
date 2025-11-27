@@ -14,12 +14,16 @@ public class PesquisaService
 
     public async Task<Pesquisa> IncluirPesquisaAsync(Pesquisa pesquisa)
     {
-        return await _pesquisaRepository.SalvarAsync(pesquisa);
+        var pesquisaInclusa = await _pesquisaRepository.SalvarAsync(pesquisa);
+        await _pesquisaRepository.CommitChanges();
+        return pesquisaInclusa ;
     }
 
     public async Task<Pesquisa?> AlterarPesquisa(Pesquisa pesquisaAAlterar)
     {
-        return await _pesquisaRepository.AtualizarAsync(pesquisaAAlterar);
+        var pesquisaAlterada = await _pesquisaRepository.AtualizarAsync(pesquisaAAlterar); 
+        await _pesquisaRepository.CommitChanges();
+        return pesquisaAlterada;
     }
 
     public async Task<List<Pesquisa>> ListarPesquisasAsync()
@@ -34,6 +38,8 @@ public class PesquisaService
 
     public async Task<bool> ExcluirPesquisa(Guid id)
     {
-        return await _pesquisaRepository.DeleteAsync(id);
+        var deletionResult = await _pesquisaRepository.DeleteAsync(id); 
+        await _pesquisaRepository.CommitChanges();
+        return deletionResult;
     }
 }

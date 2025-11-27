@@ -18,7 +18,6 @@ public class PerguntaRepository :
     public async Task<Pergunta> SalvarAsync(Pergunta entity)
     {
         var result = await _context.Perguntas.AddAsync(entity);
-        await _context.SaveChangesAsync();
         return result.Entity;
     }
 
@@ -45,7 +44,6 @@ public class PerguntaRepository :
         pergunta.Enunciado = pesquisaDto.Enunciado;
         pergunta.Alternativas = pesquisaDto.Alternativas;
         
-        await _context.SaveChangesAsync();
         return pergunta;
     }
 
@@ -56,7 +54,11 @@ public class PerguntaRepository :
         if (pergunta == null) return false;
         
         _context.Perguntas.Remove(pergunta);
-        await _context.SaveChangesAsync();
         return true;
+    }
+
+    public async Task CommitChanges()
+    {
+        await _context.SaveChangesAsync();
     }
 }
