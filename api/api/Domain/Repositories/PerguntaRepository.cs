@@ -35,17 +35,16 @@ public class PerguntaRepository :
         return  await _context.Perguntas.ToListAsync();
     }
 
-    public async Task<Pergunta?> AtualizarAsync(Pergunta entity)
+    public async Task<Pergunta?> AtualizarAsync(Pergunta pesquisaDto)
     {
-        var pergunta = await ObterPorIdAsync(entity.Id);
+        var pergunta = await ObterPorIdAsync(pesquisaDto.Id);
 
         if (pergunta == null)
             return null;
          
-        pergunta.Enunciado = entity.Enunciado;
-        pergunta.Alternativas = entity.Alternativas;
-
-        _context.Perguntas.Update(pergunta);
+        pergunta.Enunciado = pesquisaDto.Enunciado;
+        pergunta.Alternativas = pesquisaDto.Alternativas;
+        
         await _context.SaveChangesAsync();
         return pergunta;
     }

@@ -6,7 +6,7 @@ using api.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using tests.TestServices;
 
-namespace tests.Pesquisa;
+namespace tests.Pesquisas;
 
 public class RepositoryTests : IAsyncLifetime
 {
@@ -22,50 +22,13 @@ public class RepositoryTests : IAsyncLifetime
         _pesquisaRepository = new PesquisaRepository(_context);
     }
 
-    public QuestionarioContext GetContext(string name)
-    {
-        var options = new DbContextOptionsBuilder<QuestionarioContext>().UseInMemoryDatabase(name)
-            .EnableDetailedErrors()
-            .EnableSensitiveDataLogging()
-            .Options;
-        return new QuestionarioContext(options);
-    }
-
-    public Task InitializeAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-    async Task IAsyncLifetime.DisposeAsync()
-    {
-        await _context.Database.EnsureDeletedAsync();
-        await _context.DisposeAsync();
-    }
     
     [Fact]
     public async Task TestaIncluirPesquisaValida()
     {
         var context = GetContext(Guid.NewGuid().ToString());
         var pesquisaRepository = new PesquisaRepository(context);
-        var pesquisa = new api.Domain.Model.Pesquisa()
-        {
-            Nome = "teste",
-            Perguntas = new List<Pergunta>()
-            {
-                new Pergunta()
-                {
-                    Enunciado = "teste",
-                    Alternativas = new List<Alternativa>()
-                    {
-                        new Alternativa()
-                        {
-                            Opcao = 'A',
-                            Texto = "Altenativa A"
-                        }
-                    }
-                }
-            }
-        };
+        var pesquisa = ObterPesquisaTeste();
 
         await pesquisaRepository.SalvarAsync(pesquisa);
         
@@ -78,25 +41,7 @@ public class RepositoryTests : IAsyncLifetime
     {
         var context = GetContext(Guid.NewGuid().ToString());
         var pesquisaRepository = new PesquisaRepository(context);
-        var pesquisa = new api.Domain.Model.Pesquisa()
-        {
-            Nome = "teste",
-            Perguntas = new List<Pergunta>()
-            {
-                new Pergunta()
-                {
-                    Enunciado = "teste",
-                    Alternativas = new List<Alternativa>()
-                    {
-                        new Alternativa()
-                        {
-                            Opcao = 'A',
-                            Texto = "Altenativa A"
-                        }
-                    }
-                }
-            }
-        };
+        var pesquisa = ObterPesquisaTeste();
         await context.Pesquisas.AddAsync(pesquisa);
         await context.SaveChangesAsync();
         
@@ -112,7 +57,7 @@ public class RepositoryTests : IAsyncLifetime
     {
         var context = GetContext(Guid.NewGuid().ToString());
         var pesquisaRepository = new PesquisaRepository(context);
-        var pesquisa = new api.Domain.Model.Pesquisa();
+        var pesquisa = ObterPesquisaTeste();
         
         await context.Pesquisas.AddAsync(pesquisa);
         
@@ -128,23 +73,29 @@ public class RepositoryTests : IAsyncLifetime
     {
         var context = GetContext(Guid.NewGuid().ToString());
         var pesquisaRepository = new PesquisaRepository(context);
-        var pesquisa = new api.Domain.Model.Pesquisa()
-        {
-            Nome = "teste",
-        };
+        var pesquisa = ObterPesquisaTeste();
         await context.Pesquisas.AddAsync(pesquisa);
         await context.SaveChangesAsync();
+        
+        _context.ChangeTracker.Clear();
 
-        var pesquisaAlterada = new api.Domain.Model.Pesquisa(pesquisa.Id)
-        {
-            Nome = "teste 2",
-        };
+        var pesquisaEditada = ObterPesquisaTesteComIdPreenchidos(pesquisa);
+        pesquisaEditada.Nome = "teste 2";
+        pesquisaEditada.Perguntas[0].Enunciado = "enunciado 2";
+        pesquisaEditada.Perguntas[0].Alternativas[0].Texto = "Gelo";
+        await pesquisaRepository.AtualizarAsync(pesquisaEditada);
         
-        await pesquisaRepository.AtualizarAsync(pesquisaAlterada);
-        
-        var result = await context.Pesquisas.FindAsync(pesquisa.Id);
+        _context.ChangeTracker.Clear();
+
+        var result = await context.Pesquisas
+            .Where(r => r.Id == pesquisaEditada.Id)
+            .Include(p => p.Perguntas)
+            .ThenInclude(p => p.Alternativas)
+            .FirstOrDefaultAsync();
         Assert.NotNull(result);
-        Assert.Equal(pesquisaAlterada, result);
+        Assert.Equal(pesquisaEditada.Nome, result.Nome);
+        Assert.Equal(pesquisaEditada.Perguntas[0].Enunciado, result.Perguntas[0].Enunciado);
+        Assert.Equal(pesquisaEditada.Perguntas[0].Alternativas[0].Texto, result.Perguntas[0].Alternativas[0].Texto);
     }
 
     [Fact]
@@ -152,72 +103,230 @@ public class RepositoryTests : IAsyncLifetime
     {
         var context = GetContext(Guid.NewGuid().ToString());
         var pesquisaRepository = new PesquisaRepository(context);
-        var pesquisa = new api.Domain.Model.Pesquisa()
-        {
-            Nome = "Teste"
-        };
-        
+        var pesquisa = ObterPesquisaTeste();
         await context.Pesquisas.AddAsync(pesquisa);
         await context.SaveChangesAsync();
         
-        pesquisa.Perguntas.Add(new Pergunta(){Enunciado = "Pergunta Teste"});
+        context.ChangeTracker.Clear();
+
+        var pesquisaEditada = ObterPesquisaTesteComIdPreenchidos(pesquisa);
+        pesquisaEditada.Perguntas.RemoveAt(1);
+        await pesquisaRepository.AtualizarAsync(pesquisaEditada);
+        
+        _context.ChangeTracker.Clear();
+        
+        var result = await context.Pesquisas
+            .Where(r => r.Id == pesquisaEditada.Id)
+            .Include(p => p.Perguntas)
+            .ThenInclude(p => p.Alternativas)
+            .FirstOrDefaultAsync();
+        Assert.NotNull(result);
+        Assert.Equal(pesquisaEditada.Perguntas.Count, result.Perguntas.Count);
+        Assert.Equal(pesquisaEditada.Perguntas.Count, pesquisa.Perguntas.Count - 1);
     }
 
     [Fact]
-    public void TestaAlterarPesquisaRemovendoAlternativaDePergunta()
+    public async Task TestaAlterarPesquisaAdicionandoPergunta()
     {
-        throw new NotImplementedException();
+        var context = GetContext(Guid.NewGuid().ToString());
+        var pesquisaRepository = new PesquisaRepository(context);
+        var pesquisa = ObterPesquisaTeste();
+        await context.Pesquisas.AddAsync(pesquisa);
+        await context.SaveChangesAsync();
+        
+        context.ChangeTracker.Clear();
+        var pesquisaEditada = ObterPesquisaTesteComIdPreenchidos(pesquisa);
+        pesquisaEditada.Perguntas.Add(new Pergunta()
+        {
+            Enunciado = "abcd",
+            PesquisaId = pesquisaEditada.Id,
+            Alternativas = new List<Alternativa>()
+            {
+                new Alternativa(Guid.NewGuid())
+                {
+                    Opcao = 'D',
+                    Texto = "abcde",
+                }
+            }
+        });
+        await pesquisaRepository.AtualizarAsync(pesquisaEditada);
+        
+        _context.ChangeTracker.Clear();
+        
+        var result = await context.Pesquisas
+            .Where(r => r.Id == pesquisaEditada.Id)
+            .Include(p => p.Perguntas)
+            .ThenInclude(p => p.Alternativas)
+            .FirstOrDefaultAsync();
+        Assert.NotNull(result);
+        Assert.Equal(pesquisaEditada.Perguntas.Count, result.Perguntas.Count);
+        Assert.Equal(pesquisaEditada.Perguntas.Count,  pesquisa.Perguntas.Count + 1);
+    }
+
+    [Fact]
+    public async Task TestaAlterarPesquisaRemovendoAlternativaDePergunta()
+    {
+        var context = GetContext(Guid.NewGuid().ToString());
+        var pesquisaRepository = new PesquisaRepository(context);
+        var pesquisa = ObterPesquisaTeste();
+        await context.Pesquisas.AddAsync(pesquisa);
+        await context.SaveChangesAsync();
+        
+        context.ChangeTracker.Clear();
+        var pesquisaEditada = ObterPesquisaTesteComIdPreenchidos(pesquisa);
+        pesquisaEditada.Perguntas[0].Alternativas.RemoveAt(0);
+        await pesquisaRepository.AtualizarAsync(pesquisaEditada);
+        
+        _context.ChangeTracker.Clear();
+        
+        var result = await context.Pesquisas
+            .Where(r => r.Id == pesquisaEditada.Id)
+            .Include(p => p.Perguntas)
+            .ThenInclude(p => p.Alternativas)
+            .FirstOrDefaultAsync();
+        Assert.NotNull(result);
+        Assert.Equal(pesquisaEditada.Perguntas[0].Alternativas.Count, result.Perguntas[0].Alternativas.Count);
+        Assert.Equal(pesquisaEditada.Perguntas[0].Alternativas.Count,  pesquisa.Perguntas[0].Alternativas.Count - 1);
+    }
+
+    [Fact]
+    public async Task TestaAlterarPesquisaAdicionandoAlternativaDePergunta()
+    {
+        var context = GetContext(Guid.NewGuid().ToString());
+        var pesquisaRepository = new PesquisaRepository(context);
+        var pesquisa = ObterPesquisaTeste();
+        await context.Pesquisas.AddAsync(pesquisa);
+        await context.SaveChangesAsync();
+        
+        context.ChangeTracker.Clear();
+        var pesquisaEditada = ObterPesquisaTesteComIdPreenchidos(pesquisa);
+        pesquisaEditada.Perguntas[0].Alternativas.Add(new Alternativa()
+        {
+            Opcao = 'D',
+            Texto = "abcde",
+        });
+        await pesquisaRepository.AtualizarAsync(pesquisaEditada);
+        
+        _context.ChangeTracker.Clear();
+        
+        var result = await context.Pesquisas
+            .Where(r => r.Id == pesquisaEditada.Id)
+            .Include(p => p.Perguntas)
+            .ThenInclude(p => p.Alternativas)
+            .FirstOrDefaultAsync();
+        Assert.NotNull(result);
+        Assert.Equal(pesquisaEditada.Perguntas[0].Alternativas.Count, result.Perguntas[0].Alternativas.Count);
+        Assert.Equal(pesquisaEditada.Perguntas[0].Alternativas.Count,  pesquisa.Perguntas[0].Alternativas.Count + 1);
     }
 
     [Fact]
     public async Task TestaListarTodos()
     {
-        var tamanhoAnterior = _context.Pesquisas.Count();
-        var registrosAInserir = 10;
-        for (int i = 0; i < registrosAInserir; i++)
+        var context = GetContext(Guid.NewGuid().ToString());
+        var pesquisaRepository = new PesquisaRepository(context);
+        var quantidadeDeRegistrosAAdicionar = 10;
+        for (var i = 0; i < quantidadeDeRegistrosAAdicionar; i++)
         {
-            var incluirPesquisaDto = Exemplos.ObterExemplosValidos().FirstOrDefault();
-            var incluirPesquisaEntidade = PesquisaFactory.CriarPesquisa(incluirPesquisaDto);
-        
-            await _pesquisaRepository.SalvarAsync(incluirPesquisaEntidade);
+            var pesquisa = ObterPesquisaTeste();
+            await context.Pesquisas.AddAsync(pesquisa);
         }
+        await context.SaveChangesAsync();
         
-        var result = await _pesquisaRepository.ListarTodosAsync();
+        var result = await pesquisaRepository.ListarTodosAsync();
         
         Assert.NotNull(result);
         Assert.NotEmpty(result);
-        Assert.Equal(registrosAInserir + tamanhoAnterior, result.Count);
+        Assert.Equal(quantidadeDeRegistrosAAdicionar, result.Count);
     }
 
     [Fact]
-    public async Task TestaExcluirPesquisaExistente()
+    public async Task TestaExcluirPesquisa()
     {
-        var consulta = await _pesquisaRepository.ListarTodosAsync();
-        var quantidadeDeRegistrosAntesDaDelecao = consulta.Count;
-        var entidade = await _pesquisaRepository.ListarTodosAsync();
-        var result = await _pesquisaRepository.DeleteAsync(entidade.FirstOrDefault().Id);
+        var context = GetContext(Guid.NewGuid().ToString());
+        var pesquisaRepository = new PesquisaRepository(context);
+        var pesquisa = ObterPesquisaTeste();
+        _context.Pesquisas.Add(pesquisa);
+        await _context.SaveChangesAsync();
         
-        var consultaAposDelecao = await _pesquisaRepository.ListarTodosAsync();
-        var registrosAposADelecao = consultaAposDelecao.Count;
-        var registrosEsperadosAposADelecao = quantidadeDeRegistrosAntesDaDelecao - 1;
+        var retorno = await _pesquisaRepository.DeleteAsync(pesquisa.Id);
         
-        Assert.Equal(registrosEsperadosAposADelecao, registrosAposADelecao);
-        Assert.True(result);
+        var result = await _context.Pesquisas.FindAsync(pesquisa.Id);
+        Assert.True(retorno);
+        Assert.Null(result);
+    }
+    
+    private QuestionarioContext GetContext(string name)
+    {
+        var options = new DbContextOptionsBuilder<QuestionarioContext>().UseInMemoryDatabase(name)
+            .EnableDetailedErrors()
+            .EnableSensitiveDataLogging()
+            .Options;
+        return new QuestionarioContext(options);
     }
 
-    [Fact]
-    public async Task TestaExcluirPesquisaInexistente()
+    private Pesquisa ObterPesquisaTeste()
     {
-        var entidade = new api.Domain.Model.Pesquisa();
+        return new api.Domain.Model.Pesquisa(Guid.NewGuid())
+        {
+            Nome = "teste",
+            Perguntas = new List<Pergunta>()
+            {
+                new Pergunta(Guid.NewGuid())
+                {
+                    Enunciado = "teste",
+                    Alternativas = new List<Alternativa>()
+                    {
+                        new Alternativa(Guid.NewGuid())
+                        {
+                            Opcao = 'A',
+                            Texto = "Altenativa A"
+                        }
+                    }
+                },
+                new Pergunta(Guid.NewGuid())
+                {
+                    Enunciado = "teste",
+                    Alternativas = new List<Alternativa>()
+                    {
+                        new Alternativa(Guid.NewGuid())
+                        {
+                            Opcao = 'A',
+                            Texto = "Altenativa A"
+                        }
+                    }
+                }
+            }
+        };
+    }
 
-        var consulta = await _pesquisaRepository.ListarTodosAsync();
-        var quantidadeDeRegistrosAntesDaDelecao = consulta.Count;
-        var result = await _pesquisaRepository.DeleteAsync(entidade.Id);
-
-        consulta = await _pesquisaRepository.ListarTodosAsync();
-        var registrosAposADelecao = consulta.Count;
+    private Pesquisa ObterPesquisaTesteComIdPreenchidos(Pesquisa pesquisaACopiar)
+    {
+        var pesquisaCopiada = ObterPesquisaTeste();
         
-        Assert.Equal(quantidadeDeRegistrosAntesDaDelecao, registrosAposADelecao);
-        Assert.False(result);
+        pesquisaCopiada.Id = pesquisaACopiar.Id;
+        pesquisaCopiada.Perguntas = pesquisaCopiada.Perguntas.Select((pergunta, index) =>
+        {
+            pergunta.Id = pesquisaACopiar.Perguntas[index].Id;
+            pergunta.Alternativas = pergunta.Alternativas
+                .Select((alternativa, i) =>
+                {
+                    alternativa.Id = pergunta.Alternativas[i].Id;
+                    return alternativa;
+                }).ToList();
+            return pergunta;
+        }).ToList();
+        
+        return pesquisaCopiada;
+    }
+
+    public Task InitializeAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    async Task IAsyncLifetime.DisposeAsync()
+    {
+        await _context.Database.EnsureDeletedAsync();
+        await _context.DisposeAsync();
     }
 }

@@ -16,7 +16,7 @@ public class Pergunta
     public Guid Id
     {
         get => id;
-        private set => id = value;
+        set => id = value;
     }
 
     public string Enunciado

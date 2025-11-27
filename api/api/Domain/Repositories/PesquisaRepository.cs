@@ -27,66 +27,43 @@ public class PesquisaRepository : IIncludableRepository<Pesquisa>, IUpdatebleRep
         var pesquisa = await _context.Pesquisas
             .Where(p => p.Id == id)
             .Include(p => p.Perguntas)
+            .ThenInclude(p => p.Alternativas)
             .FirstOrDefaultAsync();
         return pesquisa;
     }
     
-    public async Task<Pesquisa?> AtualizarAsync(Pesquisa entity)
+    public async Task<Pesquisa?> AtualizarAsync(Pesquisa pesquisaDto)
     {
-        var pesquisa = await ObterPorIdAsync(entity.Id);
+        var pesquisa = await ObterPorIdAsync(pesquisaDto.Id);
         if (pesquisa == null) return null;
 
-        pesquisa.Nome = entity.Nome;
-        pesquisa.StatusPesquisa = entity.StatusPesquisa;
-        pesquisa.DataDispnibilizacao = entity.DataDispnibilizacao;
-        pesquisa.DataFinalizacao = entity.DataFinalizacao;
+        pesquisa.Nome = pesquisaDto.Nome;
+        pesquisa.StatusPesquisa = pesquisaDto.StatusPesquisa;
+        pesquisa.DataDispnibilizacao = pesquisaDto.DataDispnibilizacao;
+        pesquisa.DataFinalizacao = pesquisaDto.DataFinalizacao;
         
         var perguntasARemover = pesquisa.Perguntas
-            .Where(p => !entity.Perguntas.Any(e => e.Id == p.Id))
+            .Where(p => pesquisaDto.Perguntas.All(e => e.Id != p.Id))
             .ToList();
-
         foreach (var pergunta in perguntasARemover)
-        {
             pesquisa.Perguntas.Remove(pergunta);
-        }
 
-        foreach (var pergunta in entity.Perguntas)
+        foreach (var pergunta in pesquisaDto.Perguntas)
         {
             var perguntaExistente = pesquisa.Perguntas.FirstOrDefault(p => p.Id == pergunta.Id);
 
             if (perguntaExistente != null)
             {
                 perguntaExistente.Enunciado = pergunta.Enunciado;
-                
-                var alternativasARemover = perguntaExistente.Alternativas
-                    .Where(a => !pergunta.Alternativas.Any(x => x.Id == a.Id))
-                    .ToList();
-                
-                foreach (var alternativa in alternativasARemover)
-                    pergunta.Alternativas.Remove(alternativa);
-
-                foreach (var alternativa in pergunta.Alternativas)
-                {
-                    var alternativaExistente = perguntaExistente.Alternativas.FirstOrDefault(a => a.Id == alternativa.Id);
-
-                    if (alternativaExistente != null)
-                    {
-                        alternativaExistente.Opcao = alternativa.Opcao;
-                        alternativaExistente.Texto = alternativa.Texto;
-                    }
-                    else
-                    {
-                        perguntaExistente.Alternativas.Add(alternativa);
-                    }
-                }
+                AtualizarAlternativas(perguntaExistente.Alternativas, pergunta.Alternativas);
             }
             else
             {
                 pesquisa.Perguntas.Add(pergunta);
+                _context.Entry(pergunta).State = EntityState.Added;
             }
         }
         
-        _context.Pesquisas.Update(pesquisa);
         await _context.SaveChangesAsync();
         return pesquisa;
     }
@@ -105,5 +82,28 @@ public class PesquisaRepository : IIncludableRepository<Pesquisa>, IUpdatebleRep
         _context.Pesquisas.Remove(pesquuisa);
         await _context.SaveChangesAsync();
         return true;
+    }
+
+    private void AtualizarAlternativas(List<Alternativa> alternativasExistentes, List<Alternativa> alternativasDto)
+    {
+        var alterntantivasARemover = alternativasExistentes
+            .Where(a => alternativasDto.All(x => a.Id != x.Id))
+            .ToList();
+        foreach (var alternativa in alterntantivasARemover)
+            alternativasExistentes.Remove(alternativa);
+
+        foreach (var alternativa in alternativasDto)
+        {
+            var alternativaExistente = alternativasExistentes.FirstOrDefault(a => a.Id == alternativa.Id);
+            if(alternativaExistente == null){
+                alternativasExistentes.Add(alternativa);
+                _context.Entry(alternativa).State = EntityState.Added;
+            }
+            else
+            {
+                alternativaExistente.Opcao = alternativa.Opcao;
+                alternativaExistente.Texto = alternativa.Texto;
+            }
+        }
     }
 }

@@ -27,7 +27,7 @@ public class PesquisaController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult ObterPorId(Guid id)
     {
-        var pesquisa = _pesquisaService.BuscarPesquisaPorIdAsync(id);
+        var pesquisa = _pesquisaService.BuscarPesquisaPorId(id);
         return pesquisa != null ? Ok(pesquisa) : NotFound();
     }
 
@@ -42,7 +42,7 @@ public class PesquisaController : ControllerBase
     public IActionResult Alterar([FromBody] AlterarPesquisaDto pesquisaDto)
     {
         var pesquisa = PesquisaFactory.CriarPesquisa(pesquisaDto);
-        var result = _pesquisaService.AlterarPesquisaAsync(pesquisa);
+        var result = _pesquisaService.AlterarPesquisa(pesquisa);
         return result != null ? Ok(result) : NotFound();
     }
 }

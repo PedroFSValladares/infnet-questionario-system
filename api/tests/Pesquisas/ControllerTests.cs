@@ -6,7 +6,7 @@ using api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace tests.Pesquisa;
+namespace tests.Pesquisas;
 
 public class ControllerTests
 {

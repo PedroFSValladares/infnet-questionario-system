@@ -5,7 +5,7 @@ namespace api.Domain.Model;
 public class Resposta
 {
     [Key]
-    public Guid Id { get; private set; }
+    public Guid Id { get; set; }
     [Required]
     public Guid PerguntaId { get; private set; }
     [Required]

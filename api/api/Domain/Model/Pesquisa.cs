@@ -16,7 +16,7 @@ public class Pesquisa
     public Guid Id
     {
         get => _id;
-        private set => _id = value;
+        set => _id = value;
     }
 
     public string Nome
@@ -51,7 +51,7 @@ public class Pesquisa
     
     public Pesquisa()
     {
-        _id = Guid.NewGuid();
+        
     }
 
     public Pesquisa(Guid id)

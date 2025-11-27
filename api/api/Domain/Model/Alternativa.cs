@@ -17,13 +17,13 @@ public class Alternativa
 
     public Alternativa()
     {
-        Id = Guid.NewGuid();
+        
     }
 
     public Guid Id
     {
         get => id;
-        private set => id = value;
+        set => id = value;
     }
 
     public char Opcao

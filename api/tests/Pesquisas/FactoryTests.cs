@@ -6,7 +6,7 @@ using tests.TestServices;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace tests.Pesquisa;
+namespace tests.Pesquisas;
 
 public class FactoryTests
 {

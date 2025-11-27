@@ -5,7 +5,7 @@ using api.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 using tests.TestServices;
 
-namespace tests.Pesquisa;
+namespace tests.Pesquisas;
 
 public class ServiceTests
 {
