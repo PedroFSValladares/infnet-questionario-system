@@ -15,23 +15,6 @@ public class QuestionarioContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Pergunta>()
-            .HasMany(p => p.Alternativas)
-            .WithOne(a => a.Pergunta)
-            .HasForeignKey(a => a.PerguntaId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
-        
-        modelBuilder.Entity<Pesquisa>()
-            .HasMany(p => p.Perguntas)
-            .WithOne(p => p.Pesquisa)
-            .HasForeignKey(p => p.PesquisaId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<Pergunta>()
-            .HasMany(p => p.Respostas)
-            .WithOne(a => a.Pergunta)
-            .HasForeignKey(a => a.PerguntaId);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(QuestionarioContext).Assembly);
     }
 }
