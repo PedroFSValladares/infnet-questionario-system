@@ -15,4 +15,8 @@
     <Compile Remove="Domain\DTOs\Pergunta\teste.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Loaders\" />
+  </ItemGroup>
+
 </Project>

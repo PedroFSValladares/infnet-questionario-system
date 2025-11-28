@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using api.Context;
 using api.Domain.Repositories;
-using api.Loaders;
 using api.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,10 +18,8 @@ builder.Services.AddDbContext<QuestionarioContext>(options =>
 {
     options.UseInMemoryDatabase("Questionarios");
 });
-builder.Services.AddScoped<PerguntaRepository>()
-    .AddScoped<PesquisaRepository>()
+builder.Services.AddScoped<PesquisaRepository>()
     .AddScoped<PesquisaService>();
-builder.Services.AddHostedService<PerguntaLoader>();
 
 var app = builder.Build();
 app.MapControllers();
