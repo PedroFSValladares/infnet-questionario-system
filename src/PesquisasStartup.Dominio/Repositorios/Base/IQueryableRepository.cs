@@ -1,4 +1,4 @@
-namespace api.Domain.Interfaces;
+namespace PesquisasStartup.Dominio.Repositorios.Base;
 
 public interface IQueryableRepository<in TId, TEntity>
 {

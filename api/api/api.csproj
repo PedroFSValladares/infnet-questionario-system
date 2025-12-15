@@ -16,6 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Domain\Enuns\" />
+    <Folder Include="Domain\Interfaces\" />
+    <Folder Include="Domain\Model\" />
     <Folder Include="Loaders\" />
   </ItemGroup>
 

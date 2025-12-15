@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using api.Domain.Enuns;
+using PesquisasStartup.Dominio.Entities;
+using PesquisasStartup.Dominio.Enums;
 
 namespace api.Domain.Model;
 

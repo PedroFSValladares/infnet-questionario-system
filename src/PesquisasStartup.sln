@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PesquisasStartup.Dominio", "PesquisasStartup.Dominio\PesquisasStartup.Dominio.csproj", "{AD6057B4-A113-46C3-B18B-9C5548E57207}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dominio", "Dominio", "{BD2C26B6-CC48-4044-A2E7-300B5DC8957F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD6057B4-A113-46C3-B18B-9C5548E57207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD6057B4-A113-46C3-B18B-9C5548E57207}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD6057B4-A113-46C3-B18B-9C5548E57207}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD6057B4-A113-46C3-B18B-9C5548E57207}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AD6057B4-A113-46C3-B18B-9C5548E57207} = {BD2C26B6-CC48-4044-A2E7-300B5DC8957F}
+	EndGlobalSection
+EndGlobal

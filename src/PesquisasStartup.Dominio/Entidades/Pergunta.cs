@@ -1,14 +1,13 @@
 using System.ComponentModel.DataAnnotations;
-using api.Domain.DTOs.Alternativa;
-using api.Domain.DTOs.Pergunta;
+using api.Domain.Model;
 
-namespace api.Domain.Model;
+namespace PesquisasStartup.Dominio.Entities;
 
 public class Pergunta
 {
-    [Key] private Guid id;
-    [Required] private string enunciado;
-    [Required] private List<Alternativa> alternativas;
+    private Guid id;
+    private string enunciado;
+    private List<Alternativa> alternativas;
     private Guid pesquisaId;
     private Pesquisa pesquisa;
     private List<Resposta> respostas;
@@ -63,30 +62,5 @@ public class Pergunta
     {
         string alternativas = Alternativas.Select(a => a.ToString()).Aggregate((a, b) => $"{a} | {b}");
         return $"{Id} | {Enunciado} | {alternativas}";
-    }
-
-    public PerguntaResponseDto ToResponseDto()
-    {
-        return new PerguntaResponseDto()
-        {
-            Id = Id,
-            Enunciado = Enunciado,
-            Alternativas = Alternativas.Select(alternativa =>
-                new AlternativaResponseDto()
-                {
-                    Opcao = alternativa.Opcao,
-                    Texto = alternativa.Texto
-
-                }).ToList()
-        };
-    }
-
-    public PerguntaResumidaResponseDto ToPerguntaResumidaResponseDto()
-    {
-        return new PerguntaResumidaResponseDto
-        {
-            Id = Id,
-            Enunciado = Enunciado
-        };
     }
 }

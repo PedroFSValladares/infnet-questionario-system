@@ -1,4 +1,4 @@
-namespace api.Domain.Enuns;
+namespace PesquisasStartup.Dominio.Enums;
 
 public enum StatusPesquisa
 {
