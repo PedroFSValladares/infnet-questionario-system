@@ -1,8 +1,4 @@
-using System.Collections.ObjectModel;
-using api.Domain.Model;
-using PesquisasStartup.Dominio.Enums;
-
-namespace PesquisasStartup.Dominio.Entidades;
+namespace PesquisasStartup.Dominio.Entidades.Pesquisas;
 
 public class Pesquisa
 {
@@ -62,4 +58,12 @@ public class Pesquisa
         
         _perguntas.Remove(perguntaARemover);
     }
+
+    public void MarcarComoPronta(Pessoa pessoa)
+    {
+        throw new NotImplementedException();
+        //TODO
+    }
+    
+    public void PublicarPesquisa()
 }

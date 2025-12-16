@@ -1,4 +1,4 @@
-namespace PesquisasStartup.Dominio.Entidades;
+namespace PesquisasStartup.Dominio.Entidades.Pesquisas;
 
 public class Pergunta
 {
