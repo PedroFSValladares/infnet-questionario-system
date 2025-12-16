@@ -1,3 +1,5 @@
+using PesquisasStartup.Dominio.Entidades.Pessoas;
+
 namespace PesquisasStartup.Dominio.Entidades.Pesquisas;
 
 public class Pesquisa
@@ -61,9 +63,21 @@ public class Pesquisa
 
     public void MarcarComoPronta(Pessoa pessoa)
     {
-        throw new NotImplementedException();
-        //TODO
+        throw new NotImplementedException(); //TODO
     }
-    
-    public void PublicarPesquisa()
+
+    public void PublicarPesquisa(Pessoa pessoa)
+    {
+        throw new NotImplementedException(); //TODO
+    }
+
+    public void FinalizarPesquisa(Pessoa pessoa)
+    {
+        throw new NotImplementedException(); //TODO
+    }
+
+    public void Responder(List<(string pergunta, string alternativa, Pessoa pessoa)> respostas)
+    {
+        throw new NotImplementedException(); //TODO
+    }
 }

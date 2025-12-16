@@ -1,4 +1,5 @@
 using PesquisasStartup.Dominio.Entidades;
+using PesquisasStartup.Dominio.Entidades.Pesquisas;
 
 namespace PesquisasStartup.Dominio.Testes;
 

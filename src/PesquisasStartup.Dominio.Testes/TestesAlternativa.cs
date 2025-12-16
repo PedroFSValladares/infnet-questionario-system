@@ -1,5 +1,5 @@
-using api.Domain.Model;
 using PesquisasStartup.Dominio.Entidades;
+using PesquisasStartup.Dominio.Entidades.Pesquisas;
 
 namespace PesquisasStartup.Dominio.Testes;
 

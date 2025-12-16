@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using PesquisasStartup.Dominio.Entidades;
 
-namespace api.Domain.Model;
+namespace PesquisasStartup.Dominio.Entidades.Pesquisas;
 
 public class Resposta
 {
