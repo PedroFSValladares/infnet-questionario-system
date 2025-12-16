@@ -1,66 +1,49 @@
-using System.ComponentModel.DataAnnotations;
-using api.Domain.Model;
-
-namespace PesquisasStartup.Dominio.Entities;
+namespace PesquisasStartup.Dominio.Entidades;
 
 public class Pergunta
 {
-    private Guid id;
-    private string enunciado;
-    private List<Alternativa> alternativas;
-    private Guid pesquisaId;
-    private Pesquisa pesquisa;
-    private List<Resposta> respostas;
+    public string Enunciado { get; private set; }
 
-    public Guid Id
+    private List<Alternativa> _alternativas = [];
+    public IReadOnlyList<Alternativa> Alternativas => _alternativas.AsReadOnly();
+
+    private Pergunta(string enunciado)
     {
-        get => id;
-        set => id = value;
+        Enunciado = enunciado;
+    }
+    
+    public static Pergunta CriarPergunta(string enunciado, List<(char opcao, string texto)> alternativas)
+    {
+        if(string.IsNullOrEmpty(enunciado.Trim()))
+            throw new ArgumentNullException(nameof(enunciado), "O Enunciado da pergunta deve ser informado.");
+
+        if (alternativas.Count < 2)
+            throw new ArgumentException(paramName: nameof(alternativas),
+                message: "A pergunta deve conter ao menos duas alternativas.");
+        
+        Pergunta pergunta = new Pergunta(enunciado);
+        alternativas.ForEach(alt => pergunta.AdicionarAlternativa(alt.opcao, alt.texto));
+        
+        return pergunta;
     }
 
-    public string Enunciado
+    public void AdicionarAlternativa(char opcao, string texto)
     {
-        get => enunciado;
-        set => enunciado = value ?? throw new ArgumentNullException(nameof(value));
+        if (_alternativas.Any(alt => alt.Opcao == opcao))
+            throw new InvalidOperationException("A pergunta não pode ter alternativas repetidas.");
+        _alternativas.Add(Alternativa.CriarAlternativa(opcao, texto));
     }
 
-    public List<Alternativa> Alternativas
+    public void RemoverAlternativa(char opcao, string texto)
     {
-        get => alternativas;
-        set => alternativas = value ?? throw new ArgumentNullException(nameof(value));
-    }
+        var alternativaARemover = _alternativas.FirstOrDefault(alt => alt.Opcao == opcao && alt.Texto == texto);
 
-    public Guid PesquisaId
-    {
-        get => pesquisaId;
-        set => pesquisaId = value;
-    }
+        if (alternativaARemover == null)
+            throw new InvalidOperationException("A alternativa informada para remoção não existe.");
 
-    public Pesquisa Pesquisa
-    {
-        get => pesquisa;
-        set => pesquisa = value ?? throw new ArgumentNullException(nameof(value));
-    }
-
-    public List<Resposta> Respostas
-    {
-        get => respostas;
-        set => respostas = value ?? throw new ArgumentNullException(nameof(value));
-    }
-
-    public Pergunta()
-    {
-        Id = Guid.NewGuid();
-    }
-
-    public Pergunta(Guid id)
-    {
-        Id = id;
-    }
-
-    public override string ToString()
-    {
-        string alternativas = Alternativas.Select(a => a.ToString()).Aggregate((a, b) => $"{a} | {b}");
-        return $"{Id} | {Enunciado} | {alternativas}";
+        if (_alternativas.Count - 1 == 1)
+            throw new InvalidOperationException("A pergunta deve ter mais de uma alternativa.");
+        
+        _alternativas.Remove(alternativaARemover);
     }
 }

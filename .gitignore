@@ -56,3 +56,7 @@ nunit-*.xml
 # Rider IDE
 .idea/
 .idea.api.dir/
+*.sln.DotSettings.user
+
+# Dolphin (gerenciador de arquivos do KDE)
+.directory

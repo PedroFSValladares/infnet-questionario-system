@@ -1,58 +1,19 @@
-using System.ComponentModel.DataAnnotations;
-using PesquisasStartup.Dominio.Entities;
-
-namespace api.Domain.Model;
+namespace PesquisasStartup.Dominio.Entidades;
 
 public class Alternativa
 {
-    [Key] private Guid id;
-    private char opcao;
-    private string texto;
-    private Guid perguntaId;
-    private Pergunta pergunta;
-    
-    public Alternativa(Guid id)
+    public char Opcao { get; private set; }
+
+    public string Texto { get; private set; }
+
+    private Alternativa(char opcao, string texto)
     {
-        Id = id;
+        Opcao = opcao;
+        Texto = texto;
     }
 
-    public Alternativa()
+    public static Alternativa CriarAlternativa(char opcao, string texto)
     {
-        
-    }
-
-    public Guid Id
-    {
-        get => id;
-        set => id = value;
-    }
-
-    public char Opcao
-    {
-        get => opcao;
-        set => opcao = value;
-    }
-
-    public string Texto
-    {
-        get => texto;
-        set => texto = value ?? throw new ArgumentNullException(nameof(value));
-    }
-
-    public Guid PerguntaId
-    {
-        get => perguntaId;
-        set => perguntaId = value;
-    }
-
-    public Pergunta Pergunta
-    {
-        get => pergunta;
-        set => pergunta = value ?? throw new ArgumentNullException(nameof(value));
-    }
-
-    public override string ToString()
-    {
-        return $"{Opcao}.) {Texto}";
+        return string.IsNullOrEmpty(texto.Trim()) ? throw new ArgumentNullException(nameof(texto), "O Texto da alternativa deve ser informado") : new Alternativa(opcao, texto);
     }
 }

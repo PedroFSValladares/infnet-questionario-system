@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using PesquisasStartup.Dominio.Entities;
+using PesquisasStartup.Dominio.Entidades;
 
 namespace api.Domain.Model;
 

@@ -1,62 +1,65 @@
-using System.ComponentModel.DataAnnotations;
-using PesquisasStartup.Dominio.Entities;
+using System.Collections.ObjectModel;
+using api.Domain.Model;
 using PesquisasStartup.Dominio.Enums;
 
-namespace api.Domain.Model;
+namespace PesquisasStartup.Dominio.Entidades;
 
 public class Pesquisa
 {
-    [Key] 
-    private Guid _id;
-    private string _nome;
-    private StatusPesquisa _statusPesquisa;
-    private DateTime? _dataDispnibilizacao;
-    private DateTime? _dataFinalizacao;
-    private List<Pergunta> _perguntas;
 
-    public Guid Id
-    {
-        get => _id;
-        set => _id = value;
-    }
+    public Guid Id { get; private set; }
+    
+    public string Nome { get; private set; }
 
-    public string Nome
-    {
-        get => _nome;
-        set => _nome = value ?? throw new ArgumentNullException(nameof(value));
-    }
+    private List<Pergunta> _perguntas = [];
+    public IReadOnlyList<Pergunta> Perguntas => _perguntas.AsReadOnly();
 
-    public StatusPesquisa StatusPesquisa
-    {
-        get => _statusPesquisa;
-        set => _statusPesquisa = value;
-    }
+    private List<SituacoesPesquisa> _situacoes = [];
+    public IReadOnlyList<SituacoesPesquisa> Situacoes => _situacoes.AsReadOnly();
+    
+    private List<Resposta> _respostas = [];
+    public IReadOnlyList<Resposta> Respostas => _respostas.AsReadOnly();
 
-    public DateTime? DataDispnibilizacao
+    private Pesquisa()
     {
-        get => _dataDispnibilizacao;
-        set => _dataDispnibilizacao = value;
-    }
-
-    public DateTime? DataFinalizacao
-    {
-        get => _dataFinalizacao;
-        set => _dataFinalizacao = value;
-    }
-
-    public List<Pergunta> Perguntas
-    {
-        get => _perguntas;
-        set => _perguntas = value ?? throw new ArgumentNullException(nameof(value));
+        Id = Guid.NewGuid();
     }
     
-    public Pesquisa()
+    public static Pesquisa CriarPesquisa(string nome, List<(string, List<(char opcao, string texto)>)> perguntas)
     {
+        if(perguntas.Count < 2)
+            throw new ArgumentNullException(nameof(perguntas), "A pesquisa deve conter no mínimo duas perguntas.");
         
+        Pesquisa pesquisa = new Pesquisa();
+        pesquisa.AtualizarNome(nome);
+        perguntas.ForEach(pergunta => pesquisa.AdicionarPergunta(pergunta.Item1, pergunta.Item2));
+        
+        return pesquisa;
     }
 
-    public Pesquisa(Guid id)
+    public void AtualizarNome(string nome)
     {
-        _id = id;
+        if(string.IsNullOrEmpty(nome.Trim()))
+            throw new ArgumentNullException(nameof(nome), "O nome da pesquisa deve ser informado.");
+        
+        Nome = nome;
+    }
+
+    public void AdicionarPergunta(string enunciado, List<(char opcao, string texto)> alternativas)
+    {
+        _perguntas.Add(Pergunta.CriarPergunta(enunciado, alternativas));
+    }
+
+    public void RemoverPergunta(string enunciado)
+    {
+        var perguntaARemover = _perguntas.FirstOrDefault(pergunta => pergunta.Enunciado == enunciado);
+
+        if (perguntaARemover == null)
+            throw new InvalidOperationException("A pergunta a ser removida não existe.");
+
+        if (_perguntas.Count - 1 < 2)
+            throw new InvalidOperationException("A pergunta deve ter ao menos duas perguntas.");
+        
+        _perguntas.Remove(perguntaARemover);
     }
 }
