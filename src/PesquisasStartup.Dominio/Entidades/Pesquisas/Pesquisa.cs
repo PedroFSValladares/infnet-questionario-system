@@ -1,10 +1,10 @@
 using PesquisasStartup.Dominio.Entidades.Pessoas;
+using PesquisasStartup.Dominio.Enums;
 
 namespace PesquisasStartup.Dominio.Entidades.Pesquisas;
 
 public class Pesquisa
 {
-
     public Guid Id { get; private set; }
     
     public string Nome { get; private set; }
@@ -12,44 +12,53 @@ public class Pesquisa
     private List<Pergunta> _perguntas = [];
     public IReadOnlyList<Pergunta> Perguntas => _perguntas.AsReadOnly();
 
-    private List<SituacoesPesquisa> _situacoes = [];
-    public IReadOnlyList<SituacoesPesquisa> Situacoes => _situacoes.AsReadOnly();
+    private List<SituacaoPesquisa> _situacoes = [];
+    public IReadOnlyList<SituacaoPesquisa> Situacoes => _situacoes.AsReadOnly();
     
     private List<Resposta> _respostas = [];
     public IReadOnlyList<Resposta> Respostas => _respostas.AsReadOnly();
 
-    private Pesquisa()
+    private Pesquisa(Pessoa pessoa)
     {
         Id = Guid.NewGuid();
+        _situacoes.Add(SituacaoPesquisa.CriarSituacao(pessoa, TipoSituacaoPesquisa.EmProducao));
     }
     
-    public static Pesquisa CriarPesquisa(string nome, List<(string, List<(char opcao, string texto)>)> perguntas)
+    internal static Pesquisa CriarPesquisa(Pessoa criador, string nome, List<(string, List<(char opcao, string texto)>)> perguntas)
     {
         if(perguntas.Count < 2)
             throw new ArgumentNullException(nameof(perguntas), "A pesquisa deve conter no mínimo duas perguntas.");
         
-        Pesquisa pesquisa = new Pesquisa();
+        Pesquisa pesquisa = new Pesquisa(criador);
         pesquisa.AtualizarNome(nome);
         perguntas.ForEach(pergunta => pesquisa.AdicionarPergunta(pergunta.Item1, pergunta.Item2));
         
         return pesquisa;
     }
 
-    public void AtualizarNome(string nome)
+    internal void AtualizarNome(string nome)
     {
         if(string.IsNullOrEmpty(nome.Trim()))
             throw new ArgumentNullException(nameof(nome), "O nome da pesquisa deve ser informado.");
+
+        if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.EmProducao)
+            throw new InvalidOperationException("A pesquisa só pode ser alterada se estiver em produção.");
         
         Nome = nome;
     }
 
-    public void AdicionarPergunta(string enunciado, List<(char opcao, string texto)> alternativas)
+    internal void AdicionarPergunta(string enunciado, List<(char opcao, string texto)> alternativas)
     {
+        if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.EmProducao)
+            throw new InvalidOperationException("A pesquisa só pode ser alterada se estiver em produção.");
         _perguntas.Add(Pergunta.CriarPergunta(enunciado, alternativas));
     }
 
-    public void RemoverPergunta(string enunciado)
+    internal void RemoverPergunta(string enunciado)
     {
+        if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.EmProducao)
+            throw new InvalidOperationException("A pesquisa só pode ser alterada se estiver em produção.");
+        
         var perguntaARemover = _perguntas.FirstOrDefault(pergunta => pergunta.Enunciado == enunciado);
 
         if (perguntaARemover == null)
@@ -61,22 +70,25 @@ public class Pesquisa
         _perguntas.Remove(perguntaARemover);
     }
 
-    public void MarcarComoPronta(Pessoa pessoa)
+    internal void MarcarComoPronta(Pessoa pessoa)
+    {
+        if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.EmProducao)
+            throw new InvalidOperationException("A situação atual não permite marcar a pesquisa como pronta");
+        
+        _situacoes.Add(SituacaoPesquisa.CriarSituacao(pessoa, TipoSituacaoPesquisa.Pronta));
+    }
+
+    internal void PublicarPesquisa(Pessoa pessoa)
     {
         throw new NotImplementedException(); //TODO
     }
 
-    public void PublicarPesquisa(Pessoa pessoa)
+    internal void FinalizarPesquisa(Pessoa pessoa)
     {
         throw new NotImplementedException(); //TODO
     }
 
-    public void FinalizarPesquisa(Pessoa pessoa)
-    {
-        throw new NotImplementedException(); //TODO
-    }
-
-    public void Responder(List<(string pergunta, string alternativa, Pessoa pessoa)> respostas)
+    internal void Responder(List<(string pergunta, string alternativa, Pessoa pessoa)> respostas)
     {
         throw new NotImplementedException(); //TODO
     }
