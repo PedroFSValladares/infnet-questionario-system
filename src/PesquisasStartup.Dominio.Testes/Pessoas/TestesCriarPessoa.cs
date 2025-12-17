@@ -1,9 +1,9 @@
 using PesquisasStartup.Dominio.Entidades.Pessoas;
 using PesquisasStartup.Dominio.Enums;
 
-namespace PesquisasStartup.Dominio.Testes;
+namespace PesquisasStartup.Dominio.Testes.Pessoas;
 
-public class TestesPessoa
+public class TestesCriarPessoa
 {
     [Fact]
     public void TestaCriarPessoaComCpfValido_DeveRetornarSucesso()

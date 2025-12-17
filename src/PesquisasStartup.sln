@@ -9,6 +9,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dominio", "Dominio", "{BD2C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PesquisasStartup.Dominio.Testes", "PesquisasStartup.Dominio.Testes\PesquisasStartup.Dominio.Testes.csproj", "{E85B82DA-57AC-4A46-90AF-4B9774652A3D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ItensDeSolução", "ItensDeSolução", "{AE6A1A4D-A7F2-45D5-8413-9DEB2B1F1D73}"
+	ProjectSection(SolutionItems) = preProject
+		..\.dockerignore = ..\.dockerignore
+		..\.gitignore = ..\.gitignore
+		..\compose.yaml = ..\compose.yaml
+		..\README.Docker.md = ..\README.Docker.md
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

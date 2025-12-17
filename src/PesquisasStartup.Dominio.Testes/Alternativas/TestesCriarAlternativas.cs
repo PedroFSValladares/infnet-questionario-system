@@ -1,9 +1,8 @@
-using PesquisasStartup.Dominio.Entidades;
 using PesquisasStartup.Dominio.Entidades.Pesquisas;
 
-namespace PesquisasStartup.Dominio.Testes;
+namespace PesquisasStartup.Dominio.Testes.Alternativas;
 
-public class TestesAlternativa
+public class TestesCriarAlternativas
 {
     [Fact]
     public void TestaCriarAlternativaValida_DeveObterSucesso()
