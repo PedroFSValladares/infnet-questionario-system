@@ -5,12 +5,12 @@ namespace PesquisasStartup.Infraestrutura.Repositorios;
 
 public class PessoaRepository : IUsuarioRepository
 {
-    public Task<Pessoa> SalvarAsync(Pessoa entity)
+    public Task SalvarAsync(Pessoa entity)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Pessoa?> AtualizarAsync(Pessoa pesquisaDto)
+    public Task AtualizarAsync(Pessoa pesquisaDto)
     {
         throw new NotImplementedException();
     }

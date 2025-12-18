@@ -18,7 +18,7 @@ public class Resposta
         Alternativa = alternativa;
     }
     
-    internal static Resposta CriarResposta(Pergunta pergunta, Alternativa alternativa, Pessoa pessoa)
+    public static Resposta CriarResposta(Pergunta pergunta, Alternativa alternativa, Pessoa pessoa)
     {
         return new Resposta(pergunta, alternativa, pessoa);
     }

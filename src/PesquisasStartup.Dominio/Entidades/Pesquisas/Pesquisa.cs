@@ -24,7 +24,7 @@ public class Pesquisa
         _situacoes.Add(SituacaoPesquisa.CriarSituacao(pessoa, TipoSituacaoPesquisa.EmProducao));
     }
     
-    internal static Pesquisa CriarPesquisa(Pessoa criador, string nome, List<(string, List<(char opcao, string texto)>)> perguntas)
+    public static Pesquisa CriarPesquisa(Pessoa criador, string nome, List<(string, List<(char opcao, string texto)>)> perguntas)
     {
         if(perguntas.Count < 2)
             throw new ArgumentNullException(nameof(perguntas), "A pesquisa deve conter no mínimo duas perguntas.");
@@ -36,7 +36,7 @@ public class Pesquisa
         return pesquisa;
     }
 
-    internal void AtualizarNome(string nome)
+    public void AtualizarNome(string nome)
     {
         if(string.IsNullOrEmpty(nome.Trim()))
             throw new ArgumentNullException(nameof(nome), "O nome da pesquisa deve ser informado.");
@@ -47,14 +47,14 @@ public class Pesquisa
         Nome = nome;
     }
 
-    internal void AdicionarPergunta(string enunciado, List<(char opcao, string texto)> alternativas)
+    public void AdicionarPergunta(string enunciado, List<(char opcao, string texto)> alternativas)
     {
         if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.EmProducao)
             throw new InvalidOperationException("A pesquisa só pode ser alterada se estiver em produção.");
         _perguntas.Add(Pergunta.CriarPergunta(enunciado, alternativas));
     }
 
-    internal void RemoverPergunta(string enunciado)
+    public void RemoverPergunta(string enunciado)
     {
         if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.EmProducao)
             throw new InvalidOperationException("A pesquisa só pode ser alterada se estiver em produção.");
@@ -70,7 +70,7 @@ public class Pesquisa
         _perguntas.Remove(perguntaARemover);
     }
 
-    internal void MarcarComoPronta(Pessoa pessoa)
+    public void MarcarComoPronta(Pessoa pessoa)
     {
         if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.EmProducao)
             throw new InvalidOperationException("A situação atual não permite marcar a pesquisa como pronta");
@@ -78,7 +78,7 @@ public class Pesquisa
         _situacoes.Add(SituacaoPesquisa.CriarSituacao(pessoa, TipoSituacaoPesquisa.Pronta));
     }
 
-    internal void PublicarPesquisa(Pessoa pessoa)
+    public void PublicarPesquisa(Pessoa pessoa)
     {
         if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.Pronta)
             throw new InvalidOperationException("A situação atual não permite publicar a pesquisa");
@@ -86,7 +86,7 @@ public class Pesquisa
         _situacoes.Add(SituacaoPesquisa.CriarSituacao(pessoa, TipoSituacaoPesquisa.Publicada));
     }
 
-    internal void FinalizarPesquisa(Pessoa pessoa)
+    public void FinalizarPesquisa(Pessoa pessoa)
     {
         if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.Publicada)
             throw new InvalidOperationException("A situação atual não permite finalizar a pesquisa");
@@ -94,7 +94,7 @@ public class Pesquisa
         _situacoes.Add(SituacaoPesquisa.CriarSituacao(pessoa, TipoSituacaoPesquisa.Finalizada));
     }
 
-    internal void Responder(Pessoa pessoa, List<(string pergunta, char alternativa)> respostas)
+    public void Responder(Pessoa pessoa, List<(string pergunta, char alternativa)> respostas)
     {
         if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.Publicada)
             throw new InvalidOperationException("A pesquisa precisa estar publicada para ser respondida.");

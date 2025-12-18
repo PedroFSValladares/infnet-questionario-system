@@ -1,6 +1,6 @@
 namespace PesquisasStartup.Dominio.Repositorios.Base;
 
-public interface IDeletableRepository<in TId>
+public interface IDeletableRepository<in TEntity>
 {
-    public Task<bool> DeleteAsync(TId id);
+    public Task DeleteAsync(TEntity id);
 }

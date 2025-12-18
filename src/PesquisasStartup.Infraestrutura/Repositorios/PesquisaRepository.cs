@@ -1,32 +1,64 @@
+using Microsoft.EntityFrameworkCore;
 using PesquisasStartup.Dominio.Entidades.Pesquisas;
-using PesquisasStartup.Dominio.Repositorios.Pesquisa;
+using PesquisasStartup.Dominio.Repositorios.Especializacoes;
+using PesquisasStartup.Infraestrutura.Context;
 
 namespace PesquisasStartup.Infraestrutura.Repositorios;
 
 public class PesquisaRepository : IPesquisaRepository
 {
-    public Task<Pesquisa> SalvarAsync(Pesquisa entity)
+    
+    private readonly PesquisasStartupContext _context;
+
+    public PesquisaRepository(PesquisasStartupContext context)
     {
-        throw new NotImplementedException();
+        _context = context;
+    }
+    
+    public async Task SalvarAsync(Pesquisa entity)
+    {
+        _context.Pesquisas.Add(entity);
+        await _context.SaveChangesAsync();
     }
 
-    public Task<bool> DeleteAsync(Guid id)
+    public async Task DeleteAsync(Pesquisa pesquisa)
     {
-        throw new NotImplementedException();
+        _context.Pesquisas.Remove(pesquisa);
+        await _context.SaveChangesAsync();
     }
 
-    public Task<Pesquisa?> ObterPorIdAsync(Guid id)
+    public async Task<Pesquisa?> ObterPorIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await _context.Pesquisas.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);;
     }
 
-    public Task<Pesquisa?> AtualizarAsync(Pesquisa pesquisaDto)
+    public async Task AtualizarAsync(Pesquisa pesquisa)
     {
-        throw new NotImplementedException();
+        var pesquisaBanco = await _context.Pesquisas.FindAsync(pesquisa.Id);
+
+        if (pesquisaBanco != null)
+        {
+            pesquisaBanco.AtualizarNome(pesquisa.Nome);
+            
+            foreach (var perguntaBanco in pesquisaBanco.Perguntas)
+            {
+                if(pesquisa.Perguntas.Contains(perguntaBanco)) continue;
+                pesquisaBanco.RemoverPergunta(perguntaBanco.Enunciado);
+            }
+            
+            foreach (var pergunta in pesquisa.Perguntas)
+            {
+                if (pesquisaBanco.Perguntas.Contains(pergunta)) continue;
+                var alternativas = pergunta.Alternativas.Select(a => (a.Opcao, a.Texto)).ToList();
+                pesquisaBanco.AdicionarPergunta(pergunta.Enunciado, alternativas);
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 
     public Task<List<Pesquisa>> ListarTodosAsync()
     {
-        throw new NotImplementedException();
+        return _context.Pesquisas.AsNoTracking().ToListAsync();
     }
 }
