@@ -1,17 +1,13 @@
-using PesquisasStartup.Dominio.Entidades.Pessoas;
-using PesquisasStartup.Dominio.Enums;
-using PesquisasStartup.Dominio.Services;
+using PesquisasStartup.Dominio.Entidades.Pesquisas;
 
 namespace PesquisasStartup.Dominio.Testes.Pesquisas;
 
 public class TestesAlterarInformacoesPesquisa
 {
     [Fact]
-    public void TestaAlterarNomePesquisaComPerfilDeCadastrador_DeveObterSucesso()
+    public void TestaAlterarNomeDePesquisaEmProducao_DeveObterSucesso()
     {
-        var pessoa = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var pesquisa = PesquisaService.CriarPesquisa(
-            pessoa,
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -33,18 +29,15 @@ public class TestesAlterarInformacoesPesquisa
             }
         );
         
-        PesquisaService.AtualizarNome(pessoa, pesquisa, "PesquisaXPTO2");
+        pesquisa.AtualizarNome("PesquisaXPTO2");
         
         Assert.Equal("PesquisaXPTO2", pesquisa.Nome);
     }
     
     [Fact]
-    public void TestaAlterarNomePesquisaComPerfilDeRevisor_DeveObterSucesso()
+    public void TestaAlterarNomeDePesquisaPublicada_DeveFalhar()
     {
-        var pessoa = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var revisor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var pesquisa = PesquisaService.CriarPesquisa(
-            pessoa,
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -66,20 +59,15 @@ public class TestesAlterarInformacoesPesquisa
             }
         );
         
-        PesquisaService.AtualizarNome(revisor, pesquisa, "PesquisaXPTO2");
+        pesquisa.PublicarPesquisa();
         
-        Assert.Equal("PesquisaXPTO2", pesquisa.Nome);
+        Assert.Throws<InvalidOperationException>(() => pesquisa.AtualizarNome("PesquisaXPTO2"));
     }
     
     [Fact]
-    public void TestaAlterarNomePesquisaComPerfilDeIncorreto_DeveFalhar()
+    public void TestaAlterarNomeDePesquisaFinalizada_DeveFalhar()
     {
-        var pessoa = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var gestor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Gestor);
-        var convidado = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Convidado);
-        var admin = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Admin);
-        var pesquisa = PesquisaService.CriarPesquisa(
-            pessoa,
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -101,9 +89,9 @@ public class TestesAlterarInformacoesPesquisa
             }
         );
         
-        Assert.Throws<InvalidOperationException>(() => PesquisaService.AtualizarNome(gestor, pesquisa, "PesquisaXPTO2"));
-        Assert.Throws<InvalidOperationException>(() => PesquisaService.AtualizarNome(convidado, pesquisa, "PesquisaXPTO2"));
-        Assert.Throws<InvalidOperationException>(() => PesquisaService.AtualizarNome(admin, pesquisa, "PesquisaXPTO2"));
+        pesquisa.PublicarPesquisa();
+        pesquisa.FinalizarPesquisa();
         
+        Assert.Throws<InvalidOperationException>(() => pesquisa.AtualizarNome("PesquisaXPTO2"));
     }
 }

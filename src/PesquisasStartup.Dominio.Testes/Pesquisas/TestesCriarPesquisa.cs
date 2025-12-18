@@ -1,6 +1,5 @@
-using PesquisasStartup.Dominio.Entidades.Pessoas;
+using PesquisasStartup.Dominio.Entidades.Pesquisas;
 using PesquisasStartup.Dominio.Enums;
-using PesquisasStartup.Dominio.Services;
 
 namespace PesquisasStartup.Dominio.Testes.Pesquisas;
 
@@ -9,9 +8,7 @@ public class TestesCriarPesquisa
     [Fact]
     public void TestaCriarPesquisaValida_DeveRetornarSucesso()
     {
-        var pessoa = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var pesquisa = PesquisaService.CriarPesquisa(
-            pessoa,
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -37,14 +34,12 @@ public class TestesCriarPesquisa
         Assert.Single(pesquisa.Situacoes);
         Assert.NotNull(situacaoPesquisa);
         Assert.Equal(TipoSituacaoPesquisa.EmProducao, situacaoPesquisa.TipoSituacao);
-        Assert.Equal(pessoa, situacaoPesquisa.Responsavel);
     }
     
     [Fact]
     public void TestaCriarPesquisaComNomeVazio_DeveFalhar()
     {
-        Assert.Throws<ArgumentNullException>(() => PesquisaService.CriarPesquisa(
-            Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador),
+        Assert.Throws<ArgumentNullException>(() => Pesquisa.CriarPesquisa(
             "", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -62,19 +57,34 @@ public class TestesCriarPesquisa
             })
         );
     }
-
+    
     [Fact]
-    public void TestaCriarPesquisaComPerfilIncorreto_DeveFalhar()
+    public void TestaCriarPesquisaComUmaAlternativa_DeveFalhar()
     {
-        Assert.Throws<InvalidOperationException>(() => PesquisaService.CriarPesquisa(
-            Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Convidado),
-            "", 
+        Assert.Throws<ArgumentNullException>(() => Pesquisa.CriarPesquisa(
+            "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
                 ("Pergunta 1", new List<(char, string)>
                 {
                     ('A',  "Alternativa A" ),
                     ('B',  "Alternativa B" ),
+                })
+            })
+        );
+    }
+    
+    [Fact]
+    public void TestaCriarPesquisaComAlternativaRepetida_DeveFalhar()
+    {
+        Assert.Throws<InvalidOperationException>(() => Pesquisa.CriarPesquisa(
+            "PesquisaXPTO", 
+            new List<(string, List<(char opcao, string texto)>)>
+            {
+                ("Pergunta 1", new List<(char, string)>
+                {
+                    ('A',  "Alternativa A" ),
+                    ('A',  "Alternativa B" ),
                 }),
                 ("Pergunta 2", new List<(char opcao, string texto)>
                 {

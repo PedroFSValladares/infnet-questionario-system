@@ -1,6 +1,4 @@
-using PesquisasStartup.Dominio.Entidades.Pessoas;
-using PesquisasStartup.Dominio.Enums;
-using PesquisasStartup.Dominio.Services;
+using PesquisasStartup.Dominio.Entidades.Pesquisas;
 
 namespace PesquisasStartup.Dominio.Testes.Pesquisas;
 
@@ -9,13 +7,7 @@ public class TestesResponderPesquisa
     [Fact]
     public void TestaResponderPesquisaPublicadaComRespostasValidas_DeveObterSucesso()
     {
-        var cadastrador = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var revisor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Revisor);
-        var gestor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Gestor);
-        var convidado = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Convidado);
-        
-        var pesquisa = PesquisaService.CriarPesquisa(
-            cadastrador, 
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -38,9 +30,8 @@ public class TestesResponderPesquisa
             ("Pergunta 2", 'B')
         };
         
-        PesquisaService.MarcarPesquisaComoPronta(revisor, pesquisa);
-        PesquisaService.PublicarPesquisa(gestor, pesquisa);
-        PesquisaService.ResponderPesquisa(convidado, pesquisa, resposta);
+        pesquisa.PublicarPesquisa();
+        pesquisa.Responder("88348380094" ,resposta);
         
         Assert.Equal(2, pesquisa.Respostas.Count);
         Assert.Contains(pesquisa.Respostas, res => res.Pergunta.Enunciado == "Pergunta 1");
@@ -52,13 +43,7 @@ public class TestesResponderPesquisa
     [Fact]
     public void TestaResponderPesquisaPublicadaDuasVezes_DeveFalhar()
     {
-        var cadastrador = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var revisor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Revisor);
-        var gestor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Gestor);
-        var convidado = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Convidado);
-        
-        var pesquisa = PesquisaService.CriarPesquisa(
-            cadastrador, 
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -81,23 +66,16 @@ public class TestesResponderPesquisa
             ("Pergunta 2", 'B')
         };
         
-        PesquisaService.MarcarPesquisaComoPronta(revisor, pesquisa);
-        PesquisaService.PublicarPesquisa(gestor, pesquisa);
-        PesquisaService.ResponderPesquisa(convidado, pesquisa, resposta);
+        pesquisa.PublicarPesquisa();
+        pesquisa.Responder("88348380094", resposta);
         
-        Assert.Throws<InvalidOperationException>(() => PesquisaService.ResponderPesquisa(convidado, pesquisa, resposta));
+        Assert.Throws<InvalidOperationException>(() => pesquisa.Responder("88348380094", resposta));
     }
     
     [Fact]
     public void TestaResponderPesquisaPublicadaComMenosRespostasDoQuePerguntas_DeveFalhar()
     {
-        var cadastrador = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var revisor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Revisor);
-        var gestor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Gestor);
-        var convidado = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Convidado);
-        
-        var pesquisa = PesquisaService.CriarPesquisa(
-            cadastrador, 
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -119,22 +97,15 @@ public class TestesResponderPesquisa
             ("Pergunta 2", 'B')
         };
         
-        PesquisaService.MarcarPesquisaComoPronta(revisor, pesquisa);
-        PesquisaService.PublicarPesquisa(gestor, pesquisa);
+        pesquisa.PublicarPesquisa();
         
-        Assert.Throws<InvalidOperationException>(() => PesquisaService.ResponderPesquisa(convidado, pesquisa, resposta));
+        Assert.Throws<InvalidOperationException>(() => pesquisa.Responder("88348380094", resposta));
     }
     
     [Fact]
     public void TestaResponderPesquisaPublicadaComMaisRespostasDoQuePerguntas_DeveFalhar()
     {
-        var cadastrador = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var revisor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Revisor);
-        var gestor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Gestor);
-        var convidado = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Convidado);
-        
-        var pesquisa = PesquisaService.CriarPesquisa(
-            cadastrador, 
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -158,22 +129,15 @@ public class TestesResponderPesquisa
             ("Pergunta 3", 'B'),
         };
         
-        PesquisaService.MarcarPesquisaComoPronta(revisor, pesquisa);
-        PesquisaService.PublicarPesquisa(gestor, pesquisa);
+        pesquisa.PublicarPesquisa();
         
-        Assert.Throws<InvalidOperationException>(() => PesquisaService.ResponderPesquisa(convidado, pesquisa, resposta));
+        Assert.Throws<InvalidOperationException>(() => pesquisa.Responder("88348380094", resposta));
     }
     
     [Fact]
     public void TestaResponderPesquisaPublicadaComRespostasRepetidas_DeveFalhar()
     {
-        var cadastrador = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var revisor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Revisor);
-        var gestor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Gestor);
-        var convidado = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Convidado);
-        
-        var pesquisa = PesquisaService.CriarPesquisa(
-            cadastrador, 
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -196,22 +160,15 @@ public class TestesResponderPesquisa
             ("Pergunta 2", 'B'),
         };
         
-        PesquisaService.MarcarPesquisaComoPronta(revisor, pesquisa);
-        PesquisaService.PublicarPesquisa(gestor, pesquisa);
+        pesquisa.PublicarPesquisa();
         
-        Assert.Throws<ArgumentException>(() => PesquisaService.ResponderPesquisa(convidado, pesquisa, resposta));
+        Assert.Throws<ArgumentException>(() => pesquisa.Responder("88348380094", resposta));
     }
     
     [Fact]
     public void TestaResponderPesquisaPublicadaComPerguntaInexistente_DeveFalhar()
     {
-        var cadastrador = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var revisor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Revisor);
-        var gestor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Gestor);
-        var convidado = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Convidado);
-        
-        var pesquisa = PesquisaService.CriarPesquisa(
-            cadastrador, 
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -234,22 +191,15 @@ public class TestesResponderPesquisa
             ("Pergunta 3", 'B')
         };
         
-        PesquisaService.MarcarPesquisaComoPronta(revisor, pesquisa);
-        PesquisaService.PublicarPesquisa(gestor, pesquisa);
+        pesquisa.PublicarPesquisa();
         
-        Assert.Throws<ArgumentException>(() => PesquisaService.ResponderPesquisa(convidado, pesquisa, resposta));
+        Assert.Throws<ArgumentException>(() => pesquisa.Responder("88348380094", resposta));
     }
     
     [Fact]
     public void TestaResponderPesquisaPublicadaComAlternativaInexistente_DeveFalhar()
     {
-        var cadastrador = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var revisor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Revisor);
-        var gestor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Gestor);
-        var convidado = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Convidado);
-        
-        var pesquisa = PesquisaService.CriarPesquisa(
-            cadastrador, 
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -272,22 +222,15 @@ public class TestesResponderPesquisa
             ("Pergunta 2", 'E')
         };
         
-        PesquisaService.MarcarPesquisaComoPronta(revisor, pesquisa);
-        PesquisaService.PublicarPesquisa(gestor, pesquisa);
+        pesquisa.PublicarPesquisa();
         
-        Assert.Throws<ArgumentException>(() => PesquisaService.ResponderPesquisa(convidado, pesquisa, resposta));
+        Assert.Throws<ArgumentException>(() => pesquisa.Responder("88348380094", resposta));
     }
     
     [Fact]
     public void TestaResponderPesquisaNãoPublicada_DeveFalhar()
     {
-        var cadastrador = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var revisor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Revisor);
-        var gestor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Gestor);
-        var convidado = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Convidado);
-        
-        var pesquisa = PesquisaService.CriarPesquisa(
-            cadastrador, 
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -310,8 +253,6 @@ public class TestesResponderPesquisa
             ("Pergunta 2", 'B')
         };
         
-        PesquisaService.MarcarPesquisaComoPronta(revisor, pesquisa);
-        
-        Assert.Throws<InvalidOperationException>(() => PesquisaService.ResponderPesquisa(convidado, pesquisa, resposta));
+        Assert.Throws<InvalidOperationException>(() => pesquisa.Responder("88348380094", resposta));
     }
 }

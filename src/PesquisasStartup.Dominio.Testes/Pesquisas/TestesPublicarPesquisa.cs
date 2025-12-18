@@ -1,20 +1,14 @@
 using PesquisasStartup.Dominio.Entidades.Pesquisas;
-using PesquisasStartup.Dominio.Entidades.Pessoas;
 using PesquisasStartup.Dominio.Enums;
-using PesquisasStartup.Dominio.Services;
 
 namespace PesquisasStartup.Dominio.Testes.Pesquisas;
 
 public class TestesPublicarPesquisa
 {
     [Fact]
-    public void TestaPublicarPesquisaComPerfilDeGestor_DeveObterSucesso()
+    public void TestaPublicarPesquisaFinalizada_DeveFalhar()
     {
-        var pessoa = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var revisor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Revisor);
-        var gestor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Gestor);
-        var pesquisa = PesquisaService.CriarPesquisa(
-            pessoa,
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -31,20 +25,16 @@ public class TestesPublicarPesquisa
             }
         );
         
-        PesquisaService.MarcarPesquisaComoPronta(revisor, pesquisa);
-        PesquisaService.PublicarPesquisa(gestor, pesquisa);
+        pesquisa.PublicarPesquisa();
+        pesquisa.FinalizarPesquisa();
         
-        Assert.Equal(3, pesquisa.Situacoes.Count);
-        Assert.Equal(TipoSituacaoPesquisa.Publicada, pesquisa.Situacoes.Last().TipoSituacao);
+        Assert.Throws<InvalidOperationException>(() => pesquisa.PublicarPesquisa());
     }
     
     [Fact]
-    public void TestaPublicarPesquisaSemMarcarComoPronta_DeveFalhar()
+    public void TestaPublicarPesquisaEmProducao_DeveObterSucesso()
     {
-        var pessoa = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var gestor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Gestor);
-        var pesquisa = PesquisaService.CriarPesquisa(
-            pessoa,
+        var pesquisa = Pesquisa.CriarPesquisa(
             "PesquisaXPTO", 
             new List<(string, List<(char opcao, string texto)>)>
             {
@@ -60,35 +50,10 @@ public class TestesPublicarPesquisa
                 })
             }
         );
-        
-        Assert.Throws<InvalidOperationException>(() => PesquisaService.PublicarPesquisa(gestor, pesquisa));
-    }
 
-    [Fact]
-    public void TestaPublicarPesquisaSemPerfilDeGestor_DeveFalhar()
-    {
-        var pessoa = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
-        var revisor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Revisor);
-        var pesquisa = PesquisaService.CriarPesquisa(
-            pessoa,
-            "PesquisaXPTO", 
-            new List<(string, List<(char opcao, string texto)>)>
-            {
-                ("Pergunta 1", new List<(char, string)>
-                {
-                    ('A',  "Alternativa A" ),
-                    ('B',  "Alternativa B" ),
-                }),
-                ("Pergunta 2", new List<(char opcao, string texto)>
-                {
-                    ('A',  "Alternativa A" ),
-                    ('B',  "Alternativa B" ),
-                })
-            }
-        );
+        pesquisa.PublicarPesquisa();
         
-        PesquisaService.MarcarPesquisaComoPronta(revisor, pesquisa);
-        
-        Assert.Throws<InvalidOperationException>(() => PesquisaService.PublicarPesquisa(pessoa, pesquisa));
+        Assert.Equal(2, pesquisa.Situacoes.Count);
+        Assert.Equal(TipoSituacaoPesquisa.Publicada, pesquisa.Situacoes.Last().TipoSituacao);
     }
 }

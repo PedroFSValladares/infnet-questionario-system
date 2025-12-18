@@ -1,4 +1,3 @@
-using PesquisasStartup.Dominio.Entidades.Pessoas;
 using PesquisasStartup.Dominio.Enums;
 
 namespace PesquisasStartup.Dominio.Entidades.Pesquisas;
@@ -18,18 +17,18 @@ public class Pesquisa
     private List<Resposta> _respostas = [];
     public IReadOnlyList<Resposta> Respostas => _respostas.AsReadOnly();
 
-    private Pesquisa(Pessoa pessoa)
+    private Pesquisa()
     {
         Id = Guid.NewGuid();
-        _situacoes.Add(SituacaoPesquisa.CriarSituacao(pessoa, TipoSituacaoPesquisa.EmProducao));
+        _situacoes.Add(SituacaoPesquisa.CriarSituacao(TipoSituacaoPesquisa.EmProducao));
     }
     
-    public static Pesquisa CriarPesquisa(Pessoa criador, string nome, List<(string, List<(char opcao, string texto)>)> perguntas)
+    public static Pesquisa CriarPesquisa(string nome, List<(string, List<(char opcao, string texto)>)> perguntas)
     {
         if(perguntas.Count < 2)
             throw new ArgumentNullException(nameof(perguntas), "A pesquisa deve conter no mínimo duas perguntas.");
         
-        Pesquisa pesquisa = new Pesquisa(criador);
+        Pesquisa pesquisa = new Pesquisa();
         pesquisa.AtualizarNome(nome);
         perguntas.ForEach(pergunta => pesquisa.AdicionarPergunta(pergunta.Item1, pergunta.Item2));
         
@@ -70,36 +69,28 @@ public class Pesquisa
         _perguntas.Remove(perguntaARemover);
     }
 
-    public void MarcarComoPronta(Pessoa pessoa)
+    public void PublicarPesquisa()
     {
-        if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.EmProducao)
-            throw new InvalidOperationException("A situação atual não permite marcar a pesquisa como pronta");
+        if (_situacoes.Last().TipoSituacao == TipoSituacaoPesquisa.Finalizada)
+            throw new InvalidOperationException("A pesquisa atual já foi finalizada");
         
-        _situacoes.Add(SituacaoPesquisa.CriarSituacao(pessoa, TipoSituacaoPesquisa.Pronta));
+        _situacoes.Add(SituacaoPesquisa.CriarSituacao(TipoSituacaoPesquisa.Publicada));
     }
 
-    public void PublicarPesquisa(Pessoa pessoa)
-    {
-        if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.Pronta)
-            throw new InvalidOperationException("A situação atual não permite publicar a pesquisa");
-        
-        _situacoes.Add(SituacaoPesquisa.CriarSituacao(pessoa, TipoSituacaoPesquisa.Publicada));
-    }
-
-    public void FinalizarPesquisa(Pessoa pessoa)
+    public void FinalizarPesquisa()
     {
         if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.Publicada)
             throw new InvalidOperationException("A situação atual não permite finalizar a pesquisa");
         
-        _situacoes.Add(SituacaoPesquisa.CriarSituacao(pessoa, TipoSituacaoPesquisa.Finalizada));
+        _situacoes.Add(SituacaoPesquisa.CriarSituacao(TipoSituacaoPesquisa.Finalizada));
     }
 
-    public void Responder(Pessoa pessoa, List<(string pergunta, char alternativa)> respostas)
+    public void Responder(Cpf cpfPessoa, List<(string pergunta, char alternativa)> respostas)
     {
         if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.Publicada)
             throw new InvalidOperationException("A pesquisa precisa estar publicada para ser respondida.");
         
-        if (_respostas.Any(resposta => resposta.Pessoa.Cpf == pessoa.Cpf))
+        if (_respostas.Any(resposta => resposta.CpfPessoa.Value == cpfPessoa.Value))
             throw new InvalidOperationException("Pesquisa já respondida por essa pessoa");
         
         if(respostas.Count == 0 || respostas.Count != _perguntas.Count)
@@ -122,7 +113,7 @@ public class Pesquisa
             if (respostas.Count(resp => resp.pergunta == resposta.pergunta) > 1)
                 throw new ArgumentException("Não podem existir respostas repetidas para uma pesquisa", nameof(resposta));
             
-            respostasASalvar.Add(Resposta.CriarResposta(pergunta, alternativa, pessoa));
+            respostasASalvar.Add(Resposta.CriarResposta(pergunta, alternativa, cpfPessoa));
         });
         
         _respostas.AddRange(respostasASalvar);

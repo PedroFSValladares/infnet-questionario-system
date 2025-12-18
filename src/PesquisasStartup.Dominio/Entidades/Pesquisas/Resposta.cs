@@ -1,24 +1,21 @@
-using System.ComponentModel.DataAnnotations;
-using PesquisasStartup.Dominio.Entidades.Pessoas;
-
 namespace PesquisasStartup.Dominio.Entidades.Pesquisas;
 
 public class Resposta
 {
     public Alternativa Alternativa { get; private set; }
     public Pergunta Pergunta { get; private set; }
-    public Pessoa Pessoa { get; private set; }
+    public Cpf CpfPessoa { get; private set; }
     public DateTime Data { get; private set; }
 
-    private Resposta(Pergunta pergunta, Alternativa alternativa, Pessoa pessoa)
+    private Resposta(Pergunta pergunta, Alternativa alternativa, Cpf cpfPessoa)
     {
         Pergunta = pergunta;
-        Pessoa = pessoa;
+        CpfPessoa = cpfPessoa;
         Data = DateTime.Now;
         Alternativa = alternativa;
     }
     
-    public static Resposta CriarResposta(Pergunta pergunta, Alternativa alternativa, Pessoa pessoa)
+    public static Resposta CriarResposta(Pergunta pergunta, Alternativa alternativa, Cpf pessoa)
     {
         return new Resposta(pergunta, alternativa, pessoa);
     }
