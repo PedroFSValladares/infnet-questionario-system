@@ -80,16 +80,51 @@ public class Pesquisa
 
     internal void PublicarPesquisa(Pessoa pessoa)
     {
-        throw new NotImplementedException(); //TODO
+        if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.Pronta)
+            throw new InvalidOperationException("A situação atual não permite publicar a pesquisa");
+        
+        _situacoes.Add(SituacaoPesquisa.CriarSituacao(pessoa, TipoSituacaoPesquisa.Publicada));
     }
 
     internal void FinalizarPesquisa(Pessoa pessoa)
     {
-        throw new NotImplementedException(); //TODO
+        if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.Publicada)
+            throw new InvalidOperationException("A situação atual não permite finalizar a pesquisa");
+        
+        _situacoes.Add(SituacaoPesquisa.CriarSituacao(pessoa, TipoSituacaoPesquisa.Finalizada));
     }
 
-    internal void Responder(List<(string pergunta, string alternativa, Pessoa pessoa)> respostas)
+    internal void Responder(Pessoa pessoa, List<(string pergunta, char alternativa)> respostas)
     {
-        throw new NotImplementedException(); //TODO
+        if (_situacoes.Last().TipoSituacao != TipoSituacaoPesquisa.Publicada)
+            throw new InvalidOperationException("A pesquisa precisa estar publicada para ser respondida.");
+        
+        if (_respostas.Any(resposta => resposta.Pessoa.Cpf == pessoa.Cpf))
+            throw new InvalidOperationException("Pesquisa já respondida por essa pessoa");
+        
+        if(respostas.Count == 0 || respostas.Count != _perguntas.Count)
+            throw new InvalidOperationException("Todas as perguntas da pesquisa precisam ser respondidas");
+        
+        List<Resposta> respostasASalvar = [];
+        
+        respostas.ForEach(resposta =>
+        {
+            var pergunta = _perguntas.Find(pergunta => pergunta.Enunciado == resposta.pergunta);
+            
+            if(pergunta ==  null)
+                throw new ArgumentException("Resposta inválida, pergunta informada não existe na pesquisa", nameof(resposta));
+
+            var alternativa = pergunta.Alternativas.FirstOrDefault(alternativa => alternativa.Opcao == resposta.alternativa);
+            
+            if (alternativa == null)
+                throw new ArgumentException("Resposta invãlida, uma das alternativas informadas não existe na pergunta", nameof(resposta));
+
+            if (respostas.Count(resp => resp.pergunta == resposta.pergunta) > 1)
+                throw new ArgumentException("Não podem existir respostas repetidas para uma pesquisa", nameof(resposta));
+            
+            respostasASalvar.Add(Resposta.CriarResposta(pergunta, alternativa, pessoa));
+        });
+        
+        _respostas.AddRange(respostasASalvar);
     }
 }

@@ -15,53 +15,63 @@ public static class PesquisaService
         
         return Pesquisa.CriarPesquisa(pessoa, nome, perguntas);
     }
-
-    public static void AdicionarPerguntas(Pessoa pessoa, Pesquisa pesquisa, List<(string, List<(char opcao, string texto)>)> perguntas)
-    {
-        throw new NotImplementedException();
-    }
     
     public static void AdicionarPergunta(Pessoa pessoa, Pesquisa pesquisa, string enunciado, List<(char opcao, string texto)> alternativas)
     {
-        throw new NotImplementedException();
-    }
-
-    public static void RemoverPerguntas(Pessoa pessoa, Pesquisa pesquisa, List<string> enunciados)
-    {
-        throw new NotImplementedException();
+        if (pessoa.Perfil > Perfil.Revisor)
+            throw new InvalidOperationException(
+                "Para alterar uma pesquisa é necessário ter o perfil de revisor ou cadastrador");
+        
+        pesquisa.AdicionarPergunta(enunciado, alternativas);
     }
     
     public static void RemoverPergunta(Pessoa pessoa, Pesquisa pesquisa, string enunciado)
     {
-        throw new NotImplementedException();
+        if (pessoa.Perfil > Perfil.Revisor)
+            throw new InvalidOperationException(
+                "Para alterar uma pesquisa é necessário ter o perfil de revisor ou cadastrador");
+        
+        pesquisa.RemoverPergunta(enunciado);
     }
 
-    public static void AtualizarNome(Pessoa pessoa, string nome)
+    public static void AtualizarNome(Pessoa pessoa, Pesquisa pesquisa, string nome)
     {
-        throw new NotImplementedException();
+        if (pessoa.Perfil > Perfil.Revisor)
+            throw new InvalidOperationException(
+                "Para alterar uma pesquisa é necessário ter o perfil de revisor ou cadastrador");
+        
+        pesquisa.AtualizarNome(nome);
     }
 
     public static void MarcarPesquisaComoPronta(Pessoa pessoa, Pesquisa pesquisa)
     {
-        if (pessoa.Perfil != Perfil.Cadastrador)
+        if (pessoa.Perfil != Perfil.Revisor)
             throw new InvalidOperationException(
-                "Para marcar uma pesquisa como pronta é necessário ter perfil de cadastrador");
+                "Para marcar uma pesquisa como pronta é necessário ter perfil de revisor");
         
         pesquisa.MarcarComoPronta(pessoa);
     }
 
     public static void PublicarPesquisa(Pessoa pessoa, Pesquisa pesquisa)
     {
-        throw new NotImplementedException();
+        if (pessoa.Perfil != Perfil.Gestor)
+            throw new InvalidOperationException(
+                "Para publicar uma pesquisa é necessário ter perfil de gestor");
+        
+        pesquisa.PublicarPesquisa(pessoa);
     }
 
     public static void FinalizarPesquisa(Pessoa pessoa, Pesquisa pesquisa)
     {
-        throw new NotImplementedException();
+        if(pessoa.Perfil != Perfil.Gestor)
+            throw new InvalidOperationException(
+                "Para publicar uma pesquisa é necessário ter perfil de gestor");
+        
+        pesquisa.FinalizarPesquisa(pessoa);
     }
 
-    public static void ResponderPesquisa(Pessoa pessoa, Pesquisa pesquisa)
+    public static void ResponderPesquisa(Pessoa pessoa, Pesquisa pesquisa, List<(string pergunta, char alternativa)> respostas)
     {
-        throw new NotImplementedException();
+        pesquisa.Responder(pessoa, respostas);
     }
 }

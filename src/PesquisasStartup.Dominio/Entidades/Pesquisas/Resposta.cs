@@ -1,22 +1,25 @@
 using System.ComponentModel.DataAnnotations;
+using PesquisasStartup.Dominio.Entidades.Pessoas;
 
 namespace PesquisasStartup.Dominio.Entidades.Pesquisas;
 
 public class Resposta
 {
-    [Key]
-    public Guid Id { get; set; }
-    [Required]
-    public Guid PerguntaId { get; private set; }
-    [Required]
-    public char AlternativaSelecionada { get; private set; }
-    
+    public Alternativa Alternativa { get; private set; }
     public Pergunta Pergunta { get; private set; }
+    public Pessoa Pessoa { get; private set; }
+    public DateTime Data { get; private set; }
 
-    public Resposta(Guid perguntaId, char alternativaSelecionada)
+    private Resposta(Pergunta pergunta, Alternativa alternativa, Pessoa pessoa)
     {
-        Id = Guid.NewGuid();
-        PerguntaId = perguntaId;
-        AlternativaSelecionada = alternativaSelecionada;
+        Pergunta = pergunta;
+        Pessoa = pessoa;
+        Data = DateTime.Now;
+        Alternativa = alternativa;
+    }
+    
+    internal static Resposta CriarResposta(Pergunta pergunta, Alternativa alternativa, Pessoa pessoa)
+    {
+        return new Resposta(pergunta, alternativa, pessoa);
     }
 }

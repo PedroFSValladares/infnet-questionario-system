@@ -7,9 +7,10 @@ namespace PesquisasStartup.Dominio.Testes.Pesquisas;
 public class TestesMarcarPesquisaComoPronta
 {
     [Fact]
-    public void TestaMarcarPesquisaComoProntaComPerfilDeCadastrador_DeveObterSucesso()
+    public void TestaMarcarPesquisaComoProntaComPerfilDeCadastrador_DeveFalhar()
     {
         var pessoa = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
+        var revisor = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Revisor);
         var pesquisa = PesquisaService.CriarPesquisa(
             pessoa,
             "PesquisaXPTO", 
@@ -28,14 +29,14 @@ public class TestesMarcarPesquisaComoPronta
             }
         );
         
-        PesquisaService.MarcarPesquisaComoPronta(pessoa, pesquisa);
+        PesquisaService.MarcarPesquisaComoPronta(revisor, pesquisa);
         
         Assert.Equal(2, pesquisa.Situacoes.Count);
         Assert.Equal(TipoSituacaoPesquisa.Pronta, pesquisa.Situacoes.Last().TipoSituacao);
     }
 
     [Fact]
-    public void TestaMarcarPesquisaComoProntaSemPerfilDeCadastrador_DeveFalhar()
+    public void TestaMarcarPesquisaComoProntaSemPerfilDeRevisor_DeveFalhar()
     {
         var pessoa = Pessoa.CriarPessoa("84637291003", "Pessoa falsa", Perfil.Cadastrador);
         var pesquisa = PesquisaService.CriarPesquisa(
