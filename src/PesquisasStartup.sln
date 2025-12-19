@@ -22,6 +22,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infraestrutura", "Infraestr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PesquisasStartup.Infraestrutura", "PesquisasStartup.Infraestrutura\PesquisasStartup.Infraestrutura.csproj", "{84D3C95A-91A8-4A30-9471-3C9D22269891}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PesquisasStartup.Infraestrutra.Testes", "PesquisasStartup.Infraestrutra.Testes\PesquisasStartup.Infraestrutra.Testes.csproj", "{953757A3-7743-4AA4-A39E-6FC8F1152A93}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aplicação", "Aplicação", "{09F76A16-B376-43EB-AC90-C58CBE2CDF79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PesquisasStartup.Aplicacao", "PesquisasStartup.Aplicacao\PesquisasStartup.Aplicacao.csproj", "{1929F10F-79CF-4143-8FD6-B04AD1739ED7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,10 +49,20 @@ Global
 		{84D3C95A-91A8-4A30-9471-3C9D22269891}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84D3C95A-91A8-4A30-9471-3C9D22269891}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84D3C95A-91A8-4A30-9471-3C9D22269891}.Release|Any CPU.Build.0 = Release|Any CPU
+		{953757A3-7743-4AA4-A39E-6FC8F1152A93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{953757A3-7743-4AA4-A39E-6FC8F1152A93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{953757A3-7743-4AA4-A39E-6FC8F1152A93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{953757A3-7743-4AA4-A39E-6FC8F1152A93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1929F10F-79CF-4143-8FD6-B04AD1739ED7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1929F10F-79CF-4143-8FD6-B04AD1739ED7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1929F10F-79CF-4143-8FD6-B04AD1739ED7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1929F10F-79CF-4143-8FD6-B04AD1739ED7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AD6057B4-A113-46C3-B18B-9C5548E57207} = {BD2C26B6-CC48-4044-A2E7-300B5DC8957F}
 		{E85B82DA-57AC-4A46-90AF-4B9774652A3D} = {BD2C26B6-CC48-4044-A2E7-300B5DC8957F}
 		{84D3C95A-91A8-4A30-9471-3C9D22269891} = {38829632-40CA-4333-8F77-6E5082EC53B2}
+		{953757A3-7743-4AA4-A39E-6FC8F1152A93} = {38829632-40CA-4333-8F77-6E5082EC53B2}
+		{1929F10F-79CF-4143-8FD6-B04AD1739ED7} = {09F76A16-B376-43EB-AC90-C58CBE2CDF79}
 	EndGlobalSection
 EndGlobal
