@@ -29,32 +29,18 @@ public class PesquisaRepository : IPesquisaRepository
 
     public async Task<Pesquisa?> ObterPorIdAsync(Guid id)
     {
-        return await _context.Pesquisas.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);;
+        return await _context.Pesquisas
+            .Include(p => p.Respostas)
+            .Include(p => p.Situacoes)
+            .Include(p => p.Perguntas)
+            .ThenInclude(pergunta => pergunta.Alternativas)
+            .FirstOrDefaultAsync(x => x.Id == id);;
     }
 
     public async Task AtualizarAsync(Pesquisa pesquisa)
     {
-        var pesquisaBanco = await _context.Pesquisas.FindAsync(pesquisa.Id);
-
-        if (pesquisaBanco != null)
-        {
-            pesquisaBanco.AtualizarNome(pesquisa.Nome);
-            
-            foreach (var perguntaBanco in pesquisaBanco.Perguntas)
-            {
-                if(pesquisa.Perguntas.Contains(perguntaBanco)) continue;
-                pesquisaBanco.RemoverPergunta(perguntaBanco.Enunciado);
-            }
-            
-            foreach (var pergunta in pesquisa.Perguntas)
-            {
-                if (pesquisaBanco.Perguntas.Contains(pergunta)) continue;
-                var alternativas = pergunta.Alternativas.Select(a => (a.Opcao, a.Texto)).ToList();
-                pesquisaBanco.AdicionarPergunta(pergunta.Enunciado, alternativas);
-            }
-
-            await _context.SaveChangesAsync();
-        }
+        _context.Pesquisas.Update(pesquisa);
+        await _context.SaveChangesAsync();
     }
 
     public Task<List<Pesquisa>> ListarTodosAsync()
