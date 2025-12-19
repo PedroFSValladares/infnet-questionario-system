@@ -34,10 +34,10 @@ public class TestesResponderPesquisa
         pesquisa.Responder("88348380094" ,resposta);
         
         Assert.Equal(2, pesquisa.Respostas.Count);
-        Assert.Contains(pesquisa.Respostas, res => res.Pergunta.Enunciado == "Pergunta 1");
-        Assert.Contains(pesquisa.Respostas, res => res.Alternativa.Opcao == 'A');
-        Assert.Contains(pesquisa.Respostas, res => res.Pergunta.Enunciado == "Pergunta 2");
-        Assert.Contains(pesquisa.Respostas, res => res.Alternativa.Opcao == 'B');
+        Assert.Contains(pesquisa.Respostas, res => res.Pergunta == "Pergunta 1");
+        Assert.Contains(pesquisa.Respostas, res => res.Alternativa == 'A');
+        Assert.Contains(pesquisa.Respostas, res => res.Pergunta == "Pergunta 2");
+        Assert.Contains(pesquisa.Respostas, res => res.Alternativa == 'B');
     }
     
     [Fact]

@@ -4,7 +4,7 @@ public class Cpf
 {
     public string Value { get; private set; }
 
-    private Cpf(string cpf) => Value = cpf;
+    private Cpf(string value) => Value = value;
 
     public static implicit operator Cpf(string cpf)
     {

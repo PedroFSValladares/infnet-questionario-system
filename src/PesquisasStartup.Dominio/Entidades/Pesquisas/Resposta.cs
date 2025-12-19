@@ -2,12 +2,14 @@ namespace PesquisasStartup.Dominio.Entidades.Pesquisas;
 
 public class Resposta
 {
-    public Alternativa Alternativa { get; private set; }
-    public Pergunta Pergunta { get; private set; }
+    public char Alternativa { get; private set; }
+    public string Pergunta { get; private set; }
     public Cpf CpfPessoa { get; private set; }
     public DateTime Data { get; private set; }
 
-    private Resposta(Pergunta pergunta, Alternativa alternativa, Cpf cpfPessoa)
+    private Resposta() { }
+    
+    private Resposta(string pergunta, char alternativa, Cpf cpfPessoa)
     {
         Pergunta = pergunta;
         CpfPessoa = cpfPessoa;
@@ -15,7 +17,7 @@ public class Resposta
         Alternativa = alternativa;
     }
     
-    public static Resposta CriarResposta(Pergunta pergunta, Alternativa alternativa, Cpf pessoa)
+    public static Resposta CriarResposta(string pergunta, char alternativa, Cpf pessoa)
     {
         return new Resposta(pergunta, alternativa, pessoa);
     }

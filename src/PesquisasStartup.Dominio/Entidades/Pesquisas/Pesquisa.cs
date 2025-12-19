@@ -113,7 +113,7 @@ public class Pesquisa
             if (respostas.Count(resp => resp.pergunta == resposta.pergunta) > 1)
                 throw new ArgumentException("Não podem existir respostas repetidas para uma pesquisa", nameof(resposta));
             
-            respostasASalvar.Add(Resposta.CriarResposta(pergunta, alternativa, cpfPessoa));
+            respostasASalvar.Add(Resposta.CriarResposta(pergunta.Enunciado, alternativa.Opcao, cpfPessoa));
         });
         
         _respostas.AddRange(respostasASalvar);
