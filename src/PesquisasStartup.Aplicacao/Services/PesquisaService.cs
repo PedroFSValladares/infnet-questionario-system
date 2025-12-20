@@ -59,6 +59,8 @@ public class PesquisaService
                 pesquisa.AdicionarPergunta(pergunta.enunciado, pergunta.alternvativas);
             foreach (var pergunta in perguntaARemover)
                 pesquisa.RemoverPergunta(pergunta.Enunciado);
+
+            await _pesquisaRepository.AtualizarAsync(pesquisa);
         }
         catch (Exception e)
         {
@@ -95,38 +97,40 @@ public class PesquisaService
         return pesquisas.Select(p => p.ToPesquisaDto()).ToList();
     }
 
-    public async Task<PesquisaDto?> PublicarAsync(PesquisaDto pesquisaDto)
+    public async Task<PesquisaDto?> PublicarAsync(Guid id)
     {
-        var pesquisa = await _pesquisaRepository.ObterPorIdAsync(pesquisaDto.Id);
+        var pesquisa = await _pesquisaRepository.ObterPorIdAsync(id);
         if (pesquisa == null)
             return null;
         
         try
         {
             pesquisa.PublicarPesquisa();
+            await _pesquisaRepository.AtualizarAsync(pesquisa);
         }
         catch (Exception e)
         {
-            _logger.LogError("Erro de domínio ao tentar publicar a pesquisa {0}: {1}", pesquisaDto.Id, e.Message);
+            _logger.LogError("Erro de domínio ao tentar publicar a pesquisa {0}: {1}", id, e.Message);
             return null;
         }
         
         return pesquisa.ToPesquisaDto();
     }
 
-    public async Task<PesquisaDto?> FinalizarAsync(PesquisaDto pesquisaDto)
+    public async Task<PesquisaDto?> FinalizarAsync(Guid id)
     {
-        var pesquisa = await _pesquisaRepository.ObterPorIdAsync(pesquisaDto.Id);
+        var pesquisa = await _pesquisaRepository.ObterPorIdAsync(id);
         if (pesquisa == null)
             return null;
         
         try
         {
             pesquisa.FinalizarPesquisa();
+            await _pesquisaRepository.AtualizarAsync(pesquisa);
         }
         catch (Exception e)
         {
-            _logger.LogError("Erro de domínio ao tentar finalizar a pesquisa {0}: {1}", pesquisaDto.Id, e.Message);
+            _logger.LogError("Erro de domínio ao tentar finalizar a pesquisa {0}: {1}", id, e.Message);
             return null;
         }
         
@@ -142,24 +146,12 @@ public class PesquisaService
         try
         {
             pesquisa.Responder(respostaDto.Cpf, respostaDto.Respostas);
+            await _pesquisaRepository.AtualizarAsync(pesquisa);
         }
         catch (Exception e)
         {
             _logger.LogError("Erro de dominio ao tentar respodner a pesquisa {0}: {1}", pesquisa.Id, e.Message);
             throw;
         }
-    }
-
-    public async Task<ResultadoPesquisaDto> ObterResultadoPesquisaAsync(Guid id)
-    {
-        var pesquisa = await _pesquisaRepository.ObterPorIdAsync(id);
-
-        pesquisa.Respostas.Select(resposta => new ResultadoPesquisaDto()
-        {
-            IdPesquisa = pesquisa.Id,
-            NomePesquisa = pesquisa.Nome
-        });
-        
-        throw new  NotImplementedException(); //TODO
     }
 }

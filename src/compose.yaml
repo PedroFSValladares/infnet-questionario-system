@@ -1,0 +1,21 @@
+﻿services:
+  pesquisastartup.api:
+    image: pesquisastartup.api
+    build:
+      context: .
+      dockerfile: PesquisaStartup.Api/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sql_server
+  sql_server:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    container_name: sql_server_db
+    env_file:
+      - .env
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_server_data:/var/opt/mssql
+volumes:
+  sql_server_data:
