@@ -30,6 +30,9 @@ Foi pensado o seguinte ciclo de vida para a entidade pesquisa
 # Fluxos
 
 ![Fluxo Finalizar Pesquisa](infnet-questionario-FluxoGramas-Finalizar.drawio.png)
+
 ![Fluxo Incluir e alterar Pesquisa](infnet-questionario-FluxoGramas-incluir-e-alterar.drawio.png)
+
 ![Fluxo Publicar Pesquisa](infnet-questionario-FluxoGramas-publicar.drawio.png)
+
 ![Fluxo Responder Pesquisa](infnet-questionario-FluxoGramas-responder.drawio.png)
